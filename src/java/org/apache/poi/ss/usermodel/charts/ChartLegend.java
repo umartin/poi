@@ -26,7 +26,7 @@ import org.apache.poi.util.Beta;
  */
 @Beta
 public interface ChartLegend extends ManuallyPositionable {
-	
+
 	/**
 	 * @return legend position
 	 */
@@ -36,4 +36,19 @@ public interface ChartLegend extends ManuallyPositionable {
 	 * @param position new legend position
 	 */
 	void setPosition(LegendPosition position);
+
+	/**
+	 * @return overlay value.
+	 */
+	boolean isOverlay();
+
+	/**
+	 * If true the legend is positioned over the chart area otherwise
+	 * the legend is displayed next to it.
+	 *
+	 * Default is no overlay.
+	 *
+	 * @param value
+	 */
+	void setOverlay(boolean value);
 }
