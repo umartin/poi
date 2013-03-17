@@ -15,26 +15,26 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel.charts;
+package org.apache.poi.xssf.usermodel.charts;
 
-import org.apache.poi.util.Beta;
+import junit.framework.TestCase;
 
-/**
- * A factory for different chart axis.
- *
- * @author Roman Kashitsyn
- */
-@Beta
-public interface ChartAxisFactory {
+import org.apache.poi.ss.usermodel.charts.*;
+import org.apache.poi.xssf.usermodel.*;
 
-	/**
-	 * @return new value axis
-	 */
-	ValueAxis createValueAxis(AxisPosition pos);
+public final class TestXSSFCategoryAxis extends TestCase {
 
-	/**
-	 * @return new category axis.
-	 */
-	ChartAxis createCategoryAxis(AxisPosition pos);
+	public void testAccessMethods() throws Exception {
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet();
+		XSSFDrawing drawing = sheet.createDrawingPatriarch();
+		XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+		XSSFChart chart = drawing.createChart(anchor);
+		XSSFCategoryAxis axis = chart.getChartAxisFactory().createCategoryAxis(AxisPosition.BOTTOM);
 
+		axis.setCrosses(AxisCrosses.AUTO_ZERO);
+		assertEquals(axis.getCrosses(), AxisCrosses.AUTO_ZERO);
+
+		assertEquals(chart.getAxis().size(), 1);
+	}
 }
