@@ -32,6 +32,7 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.ThemesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
@@ -448,4 +449,14 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         assertEquals(IndexedColors.RED.index,
                 sh.getCTWorksheet().getSheetPr().getTabColor().getIndexed());
     }
+
+	public void testCreateTheme() {
+		XSSFWorkbook wb = new XSSFWorkbook();
+
+		ThemesTable theme = wb.getTheme();
+		assertNull(theme);
+
+		theme = wb.createTheme();
+		assertNotNull(theme);
+	}
 }

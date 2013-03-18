@@ -1328,6 +1328,21 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return theme;
     }
 
+	/**
+	 * Creates a Theme, if it doesn't exist, and returns it.
+	 */
+	public ThemesTable createTheme() {
+		if (theme == null) {
+			if (!workbook.isSetWorkbookPr()) {
+				workbook.addNewWorkbookPr();
+			}
+			workbook.getWorkbookPr().setDefaultThemeVersion(124226);
+			theme = (ThemesTable) createRelationship(XSSFRelation.THEME, XSSFFactory.getInstance());
+			stylesSource.setTheme(theme);
+		}
+		return theme;
+	}
+
     /**
      * Returns an object that handles instantiating concrete
      *  classes of the various instances for XSSF.
