@@ -44,6 +44,7 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.ThemesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
@@ -474,7 +475,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		sheet = workbook.createSheet();
         sheet.setColumnWidth(4, 5000);
         sheet.setColumnWidth(5, 5000);
-       
+
         sheet.groupColumn((short) 4, (short) 5);
 
         accessWorkbook(workbook);
@@ -501,9 +502,9 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	public void testBug48495() {
 		try {
 			Workbook wb = XSSFTestDataSamples.openSampleWorkbook("48495.xlsx");
-			
+
 			assertSheetOrder(wb, "Sheet1");
-			
+
 			Sheet sheet = wb.getSheetAt(0);
 			sheet.shiftRows(2, sheet.getLastRowNum(), 1, true, false);
 			Row newRow = sheet.getRow(2);
@@ -519,7 +520,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 //		    } finally {
 //		    	fileOut.close();
 //		    }
-			
+
 			Workbook read = XSSFTestDataSamples.writeOutAndReadBack(wb);
 			assertNotNull(read);
 			assertSheetOrder(read, "Sheet1", "Sheet1 (2)");
@@ -528,7 +529,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		}
 		System.out.println("Done");
 	}
-	
+
 	public void testBug47090a() {
 	    Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
 		assertSheetOrder(workbook, "Sheet1", "Sheet2");
@@ -539,7 +540,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	    Workbook read = XSSFTestDataSamples.writeOutAndReadBack(workbook);
 		assertSheetOrder(read, "Sheet2", "Sheet1");
 	}
-	
+
 	public void testBug47090b() {
 	    Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
 	    assertSheetOrder(workbook, "Sheet1", "Sheet2");
@@ -556,12 +557,12 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	    assertSheetOrder(workbook, "Sheet1", "Sheet2");
 	    workbook.removeSheetAt(0);
 		assertSheetOrder(workbook, "Sheet2");
-	    workbook.cloneSheet(0);	
+	    workbook.cloneSheet(0);
 		assertSheetOrder(workbook, "Sheet2", "Sheet2 (2)");
 	    Workbook read = XSSFTestDataSamples.writeOutAndReadBack(workbook);
 		assertSheetOrder(read, "Sheet2", "Sheet2 (2)");
 	}
-	
+
 	public void testBug47090d() {
 	    Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
 	    assertSheetOrder(workbook, "Sheet1", "Sheet2");
@@ -569,9 +570,19 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		assertSheetOrder(workbook, "Sheet1", "Sheet2", "Sheet0");
 	    workbook.removeSheetAt(0);
 		assertSheetOrder(workbook, "Sheet2", "Sheet0");
-	    workbook.createSheet();	
+	    workbook.createSheet();
 		assertSheetOrder(workbook, "Sheet2", "Sheet0", "Sheet1");
 	    Workbook read = XSSFTestDataSamples.writeOutAndReadBack(workbook);
 		assertSheetOrder(read, "Sheet2", "Sheet0", "Sheet1");
+	}
+
+	public void testCreateTheme() {
+		XSSFWorkbook wb = new XSSFWorkbook();
+
+		ThemesTable theme = wb.getTheme();
+		assertNull(theme);
+
+		theme = wb.createTheme();
+		assertNotNull(theme);
 	}
 }
