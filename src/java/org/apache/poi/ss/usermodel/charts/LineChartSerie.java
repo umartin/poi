@@ -20,21 +20,22 @@ package org.apache.poi.ss.usermodel.charts;
 import org.apache.poi.util.Beta;
 
 /**
- * A factory for different charts data types.
  *
- * @author Roman Kashitsyn, Martin Andersson
+ * Represents a line chart serie.
+ *
+ * @author Martin Andersson
  */
 @Beta
-public interface ChartDataFactory {
+public interface LineChartSerie {
 
 	/**
-	 * @return an appropriate ScatterChartData instance
+	 * @return data source used for category axis data.
 	 */
-	ScatterChartData createScatterChartData();
+	ChartDataSource<?> getCategoryAxisData();
 
 	/**
-	 * @return a LineChartData instance
+	 * @return data source used for value axis.
 	 */
-	LineChartData createLineChartData();
+	ChartDataSource<? extends Number> getValues();
 
 }
