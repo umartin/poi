@@ -25,7 +25,7 @@ import org.apache.poi.util.Beta;
  * @author Roman Kashitsyn
  */
 @Beta
-public interface ScatterChartSerie {
+public interface ScatterChartSerie extends ChartSerie {
 
     /**
      * @return data source used for X axis values

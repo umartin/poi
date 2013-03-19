@@ -15,27 +15,35 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel.charts;
+package org.apache.poi.xssf.usermodel.charts;
 
-import org.apache.poi.util.Beta;
+import junit.framework.TestCase;
+
+import org.apache.poi.ss.usermodel.charts.TitleType;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  *
- * Represents a line chart serie.
- *
  * @author Martin Andersson
  */
-@Beta
-public interface LineChartSerie extends ChartSerie {
+public class TestAbstractXSSFChartSerie extends TestCase {
 
-	/**
-	 * @return data source used for category axis data.
-	 */
-	ChartDataSource<?> getCategoryAxisData();
+	public void testTitleAccessorMethods() {
+		AbstractXSSFChartSerie serie = new AbstractXSSFChartSerie() {};
 
-	/**
-	 * @return data source used for value axis.
-	 */
-	ChartDataSource<? extends Number> getValues();
+		assertFalse(serie.isTitleSet());
 
+		serie.setTitle("title");
+		assertTrue(serie.isTitleSet());
+		assertNotNull(serie.getCTSerTx());
+		assertEquals(TitleType.STRING, serie.getTitleType());
+		assertEquals("title", serie.getTitleString());
+
+		CellReference cellRef = new CellReference("Sheet1!A1");
+		serie.setTitle(cellRef);
+		assertTrue(serie.isTitleSet());
+		assertNotNull(serie.getCTSerTx());
+		assertEquals(TitleType.CELL_REFERENCE, serie.getTitleType());
+		assertEquals(cellRef, serie.getTitleCellReference());
+	}
 }

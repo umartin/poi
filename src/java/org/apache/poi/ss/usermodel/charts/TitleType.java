@@ -17,25 +17,12 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
-import org.apache.poi.util.Beta;
-
 /**
- *
- * Represents a line chart serie.
+ * Title types for charts.
  *
  * @author Martin Andersson
  */
-@Beta
-public interface LineChartSerie extends ChartSerie {
-
-	/**
-	 * @return data source used for category axis data.
-	 */
-	ChartDataSource<?> getCategoryAxisData();
-
-	/**
-	 * @return data source used for value axis.
-	 */
-	ChartDataSource<? extends Number> getValues();
-
+public enum TitleType {
+	STRING,
+	CELL_REFERENCE;
 }

@@ -17,25 +17,41 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
-import org.apache.poi.util.Beta;
+import org.apache.poi.ss.util.CellReference;
 
 /**
- *
- * Represents a line chart serie.
+ * Basic settings for all chart series.
  *
  * @author Martin Andersson
  */
-@Beta
-public interface LineChartSerie extends ChartSerie {
+public interface ChartSerie {
 
 	/**
-	 * @return data source used for category axis data.
+	 * Sets the title of the series as a string literal.
+	 *
+	 * @param title
 	 */
-	ChartDataSource<?> getCategoryAxisData();
+	void setTitle(String title);
 
 	/**
-	 * @return data source used for value axis.
+	 * Sets the title of the series as a cell reference.
+	 *
+	 * @param titleReference
 	 */
-	ChartDataSource<? extends Number> getValues();
+	void setTitle(CellReference titleReference);
 
+	/**
+	 * @return title as string literal.
+	 */
+	String getTitleString();
+
+	/**
+	 * @return title as cell reference.
+	 */
+	CellReference getTitleCellReference();
+
+	/**
+	 * @return title type.
+	 */
+	TitleType getTitleType();
 }
