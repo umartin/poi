@@ -50,7 +50,7 @@ public class XSSFLineChartData implements LineChartData {
 		series = new ArrayList<Serie>();
 	}
 
-	static class Serie implements LineChartSerie {
+	static class Serie extends AbstractXSSFChartSerie implements LineChartSerie {
         private int id;
         private int order;
         private ChartDataSource<?> categories;
@@ -85,6 +85,10 @@ public class XSSFLineChartData implements LineChartData {
 			XSSFChartUtil.buildAxDataSource(catDS, categories);
 			CTNumDataSource valueDS = ctLineSer.addNewVal();
 			XSSFChartUtil.buildNumDataSource(valueDS, values);
+
+			if (isTitleSet()) {
+				ctLineSer.setTx(getCTSerTx());
+			}
 		}
 	}
 
