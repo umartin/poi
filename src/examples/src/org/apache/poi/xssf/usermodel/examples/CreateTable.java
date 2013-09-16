@@ -33,9 +33,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
 
 /**
- * Demonstrates how to work with excel tables.
- *
- * @author Sofia Larsson
+ * Demonstrates how to create a simple table using Apache POI.
  */
 public class CreateTable {
         
