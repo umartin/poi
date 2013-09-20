@@ -150,7 +150,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * array of pictures for this workbook
      */
     private List<XSSFPictureData> pictures;
-
+    
     private static POILogger logger = POILogFactory.getLogger(XSSFWorkbook.class);
 
     /**
@@ -159,6 +159,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     private XSSFCreationHelper _creationHelper;
 
+    private List<CTPivotCache> pivotCaches;
     /**
      * Create a new SpreadsheetML workbook.
      */
@@ -1678,5 +1679,24 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         CTCalcPr calcPr = ctWorkbook.getCalcPr();
         return calcPr != null && calcPr.getCalcId() != 0;
     }
-
+    
+    /**
+     * Add pivotCache to the workbook 
+     */
+    public void addPivotCache() {
+        CTWorkbook ctWorkbook = getCTWorkbook();
+        CTPivotCaches caches;
+        if(ctWorkbook.isSetPivotCaches()) {
+            caches = ctWorkbook.getPivotCaches();
+        } else {
+            caches = ctWorkbook.addNewPivotCaches();
+            pivotCaches = new ArrayList<CTPivotCache>();
+        }
+        CTPivotCache cache = caches.addNewPivotCache();
+        
+        int cacheId = pivotCaches.size();
+        
+        pivotCaches.add(cache);
+        cache.setCacheId(cacheId);
+    }
 }
