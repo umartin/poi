@@ -87,7 +87,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private Map<Integer, CTCellFormula> sharedFormulas;
     private TreeMap<String,XSSFTable> tables;
     private List<CellRangeAddress> arrayFormulas;
-    private XSSFDataValidationHelper dataValidationHelper;    
+    private XSSFDataValidationHelper dataValidationHelper; 
+    
+    private List<XSSFPivotTable> pivotTables;
 
     /**
      * Creates new XSSFSheet   - called by XSSFWorkbook to create a sheet from scratch.
@@ -3366,5 +3368,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
       }
       return null;
     }
-
+    
+    public XSSFPivotTable createPivotTable() {
+        if(pivotTables == null) {
+            pivotTables = new ArrayList<XSSFPivotTable>();
+        }
+        XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE, XSSFFactory.getInstance(), pivotTables.size()+1);
+        pivotTables.add(pivotTable);
+        return pivotTable;
+    }
 }
