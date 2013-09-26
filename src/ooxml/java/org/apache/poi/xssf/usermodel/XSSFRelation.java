@@ -284,6 +284,12 @@ public final class XSSFRelation extends POIXMLRelation {
           "/xl/printerSettings/printerSettings#.bin",
           null
    );
+    public static final XSSFRelation PIVOT_TABLE = new XSSFRelation(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.pivotTable+xml",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotTable",
+            "/xl/pivotTables/pivotTable#.xml",
+            XSSFPivotTable.class
+    );
 
 
 	private XSSFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
