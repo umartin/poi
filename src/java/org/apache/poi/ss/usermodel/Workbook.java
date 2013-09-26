@@ -24,7 +24,8 @@ import java.util.List;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFPivotTable;
+import org.apache.poi.xssf.usermodel.XSSFPivotCacheDefinition;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 
 /**
  * High level representation of a Excel workbook.  This is the first object most users
@@ -581,6 +582,8 @@ public interface Workbook {
      */
     boolean getForceFormulaRecalculation();
 
-    public void addPivotCache();
+    public CTPivotCache addPivotCache(String rId);
+    
+    public String addPivotCacheDefinitionRelation();
 
 }

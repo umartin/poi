@@ -40,6 +40,7 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.SingleXmlCells;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheDefinition;
 
 /**
  *
@@ -289,6 +290,12 @@ public final class XSSFRelation extends POIXMLRelation {
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotTable",
             "/xl/pivotTables/pivotTable#.xml",
             XSSFPivotTable.class
+    );
+    public static final XSSFRelation PIVOT_CACHE_DEFINITION = new XSSFRelation(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheDefinition+xml",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition",
+            "/xl/pivotCache/pivotCacheDefinition#.xml",
+            XSSFPivotCacheDefinition.class
     );
 
 

@@ -3375,6 +3375,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
         XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE, XSSFFactory.getInstance(), pivotTables.size()+1);
         pivotTables.add(pivotTable);
+        Workbook wb = getWorkbook();
+        String rId = wb.addPivotCacheDefinitionRelation();
+        pivotTable.setCache(wb.addPivotCache(rId));
+        
         return pivotTable;
     }
 }
