@@ -1749,9 +1749,4 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         cache.setId(rId);
         return cache;
     }
-
-    public String addPivotCacheDefinitionRelation() {
-        XSSFPivotCacheDefinition pivotCacheDefinition = (XSSFPivotCacheDefinition) createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, XSSFFactory.getInstance());
-        return getRelationId(pivotCacheDefinition);
-    }
 }

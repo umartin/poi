@@ -584,6 +584,5 @@ public interface Workbook {
 
     public CTPivotCache addPivotCache(String rId);
     
-    public String addPivotCacheDefinitionRelation();
 
 }

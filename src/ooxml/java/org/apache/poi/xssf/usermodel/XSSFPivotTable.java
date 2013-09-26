@@ -28,6 +28,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinitio
 public class XSSFPivotTable extends POIXMLDocumentPart{
     private CTPivotCache pivotCache;
     private CTPivotTableDefinition pivotTableDefinition;
+    private XSSFPivotCacheDefinition pivotCacheDefinition;
     private String workbookRelationId;
     public XSSFPivotTable() {
         
@@ -56,5 +57,15 @@ public class XSSFPivotTable extends POIXMLDocumentPart{
     public void setWorkbookRelationId(String workbookRelationId) {
         this.workbookRelationId = workbookRelationId;
     }
+
+    public XSSFPivotCacheDefinition getPivotCacheDefinition() {
+        return pivotCacheDefinition;
+    }
+
+    public void setPivotCacheDefinition(XSSFPivotCacheDefinition pivotCacheDefinition) {
+        this.pivotCacheDefinition = pivotCacheDefinition;
+    }
+    
+    
     
 }
