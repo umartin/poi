@@ -1095,4 +1095,9 @@ public class SXSSFWorkbook implements Workbook
     }
 
 //end of interface implementation
+
+    @Override
+    public void addPivotCache() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

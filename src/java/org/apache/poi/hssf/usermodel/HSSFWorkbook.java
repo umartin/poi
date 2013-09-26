@@ -1203,6 +1203,11 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         fs.writeFilesystem(stream);
     }
 
+    @Override
+    public void addPivotCache() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     /**
      * Totals the sizes of all sheet records and eventually serializes them
      */
