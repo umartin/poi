@@ -33,6 +33,7 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
@@ -447,5 +448,14 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         assertTrue(sh.getCTWorksheet().getSheetPr().isSetTabColor());
         assertEquals(IndexedColors.RED.index,
                 sh.getCTWorksheet().getSheetPr().getTabColor().getIndexed());
+    }
+    
+    public void testAddPivotCache() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        CTWorkbook ctWb = wb.getCTWorkbook();
+        CTPivotCache pivotCache = wb.addPivotCache("0");
+        assertTrue(ctWb.isSetPivotCaches());
+        assertSame(pivotCache, ctWb.getPivotCaches().getPivotCacheList().get(0));
+        assertEquals("0", pivotCache.getId());
     }
 }
