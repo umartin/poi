@@ -18,6 +18,6 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
 
-public class XSSFPivotCacheRecord extends POIXMLDocumentPart {
+public class XSSFPivotCacheRecords extends POIXMLDocumentPart {
     
 }

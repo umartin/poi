@@ -17,8 +17,6 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 
@@ -29,6 +27,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart{
     private CTPivotCache pivotCache;
     private CTPivotTableDefinition pivotTableDefinition;
     private XSSFPivotCacheDefinition pivotCacheDefinition;
+    private XSSFPivotCacheRecords pivotCacheRecord;
     private String workbookRelationId;
     public XSSFPivotTable() {
         
@@ -65,6 +64,15 @@ public class XSSFPivotTable extends POIXMLDocumentPart{
     public void setPivotCacheDefinition(XSSFPivotCacheDefinition pivotCacheDefinition) {
         this.pivotCacheDefinition = pivotCacheDefinition;
     }
+
+    public XSSFPivotCacheRecords getPivotCacheRecord() {
+        return pivotCacheRecord;
+    }
+
+    public void setPivotCacheRecord(XSSFPivotCacheRecords pivotCacheRecord) {
+        this.pivotCacheRecord = pivotCacheRecord;
+    }
+    
     
     
     

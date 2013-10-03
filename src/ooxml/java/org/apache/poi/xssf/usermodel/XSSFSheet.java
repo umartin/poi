@@ -3371,7 +3371,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     
     public XSSFPivotTable createPivotTable() {
         if(pivotTables == null) {
-            pivotTables = new ArrayList<XSSFPivotTable>();
+            pivotTables = new ArrayList<>();
         }
         XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE, XSSFFactory.getInstance(), pivotTables.size()+1);
         pivotTables.add(pivotTable);
@@ -3380,6 +3380,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         XSSFPivotCacheDefinition pcd = (XSSFPivotCacheDefinition) wb.createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, XSSFFactory.getInstance());
         String rId = wb.getRelationId(pcd);
         pivotTable.setCache(wb.addPivotCache(rId));
+        
+        XSSFPivotCacheRecords pcr = (XSSFPivotCacheRecords) pcd.createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, XSSFFactory.getInstance());
         
         return pivotTable;
     }

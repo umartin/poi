@@ -297,6 +297,12 @@ public final class XSSFRelation extends POIXMLRelation {
             "/xl/pivotCache/pivotCacheDefinition#.xml",
             XSSFPivotCacheDefinition.class
     );
+    public static final XSSFRelation PIVOT_CACHE_RECORDS = new XSSFRelation(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheRecords+xml",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheRecords",
+            "/xl/pivotCache/pivotCacheRecords#.xml",
+            XSSFPivotCacheRecords.class
+    );
 
 
 	private XSSFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
