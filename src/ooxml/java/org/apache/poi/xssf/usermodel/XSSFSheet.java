@@ -3371,27 +3371,36 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
       }
       return null;
     }
-    
+    /**
+     * Creates an empty XSSFPivotTable and sets up all its relationships
+     * including: pivotCacheDefinition, pivotCacheRecords
+     * @return returns a pivotTable
+     */
     public XSSFPivotTable createPivotTable() {
         if(pivotTables == null) {
             pivotTables = new ArrayList<>();
         }
         int tableId = pivotTables.size()+1;
         
-        XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE, XSSFFactory.getInstance(), tableId);
+        XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE, 
+                XSSFFactory.getInstance(), tableId);
         pivotTables.add(pivotTable);
         XSSFWorkbook workbook = getWorkbook();
         
-        XSSFPivotCacheDefinition pivotCacheDefinition = (XSSFPivotCacheDefinition) workbook.createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, XSSFFactory.getInstance(), tableId);
+        XSSFPivotCacheDefinition pivotCacheDefinition = (XSSFPivotCacheDefinition) workbook.
+                createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, XSSFFactory.getInstance(), tableId);
         String rId = workbook.getRelationId(pivotCacheDefinition);
+        //Create relationship between pivotTable and pivotCacheDefinition without creating a new instance
         PackagePart pivotPackagePart = pivotTable.getPackagePart();
-        pivotPackagePart.addRelationship(pivotCacheDefinition.getPackagePart().getPartName(), TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT);
+        pivotPackagePart.addRelationship(pivotCacheDefinition.getPackagePart().getPartName(), 
+                TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT);
         pivotTable.setPivotCacheDefinition(pivotCacheDefinition);
         
+        //Create pivotCache and sets up it's relationship with the workbook
         pivotTable.setCache(workbook.addPivotCache(rId));
-        pivotTable.addRelation(rId, pivotCacheDefinition);
-      
-        XSSFPivotCacheRecords pivotCacheRecords = (XSSFPivotCacheRecords) pivotCacheDefinition.createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, XSSFFactory.getInstance(), tableId);
+        
+        XSSFPivotCacheRecords pivotCacheRecords = (XSSFPivotCacheRecords) pivotCacheDefinition.
+                createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, XSSFFactory.getInstance(), tableId);
         pivotTable.setPivotCacheRecords(pivotCacheRecords);
                 
         return pivotTable;
