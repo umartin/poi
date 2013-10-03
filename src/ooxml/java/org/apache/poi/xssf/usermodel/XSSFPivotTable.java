@@ -28,7 +28,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart{
     private CTPivotTableDefinition pivotTableDefinition;
     private XSSFPivotCacheDefinition pivotCacheDefinition;
     private XSSFPivotCacheRecords pivotCacheRecord;
-    private String workbookRelationId;
+
     public XSSFPivotTable() {
         
     }
@@ -49,14 +49,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart{
         this.pivotTableDefinition = pivotTableDefinition;
     }
 
-    public String getWorkbookRelationId() {
-        return workbookRelationId;
-    }
-
-    public void setWorkbookRelationId(String workbookRelationId) {
-        this.workbookRelationId = workbookRelationId;
-    }
-
     public XSSFPivotCacheDefinition getPivotCacheDefinition() {
         return pivotCacheDefinition;
     }
@@ -65,11 +57,11 @@ public class XSSFPivotTable extends POIXMLDocumentPart{
         this.pivotCacheDefinition = pivotCacheDefinition;
     }
 
-    public XSSFPivotCacheRecords getPivotCacheRecord() {
+    public XSSFPivotCacheRecords getPivotCacheRecords() {
         return pivotCacheRecord;
     }
 
-    public void setPivotCacheRecord(XSSFPivotCacheRecords pivotCacheRecord) {
+    public void setPivotCacheRecords(XSSFPivotCacheRecords pivotCacheRecord) {
         this.pivotCacheRecord = pivotCacheRecord;
     }
     

@@ -39,6 +39,8 @@ import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.SheetNameFormatter;
@@ -55,6 +57,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
+import org.apache.tools.ant.taskdefs.Pack;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
@@ -3373,16 +3376,24 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         if(pivotTables == null) {
             pivotTables = new ArrayList<>();
         }
-        XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE, XSSFFactory.getInstance(), pivotTables.size()+1);
+        int tableId = pivotTables.size()+1;
+        
+        XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE, XSSFFactory.getInstance(), tableId);
         pivotTables.add(pivotTable);
-        XSSFWorkbook wb = getWorkbook();
+        XSSFWorkbook workbook = getWorkbook();
         
-        XSSFPivotCacheDefinition pcd = (XSSFPivotCacheDefinition) wb.createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, XSSFFactory.getInstance());
-        String rId = wb.getRelationId(pcd);
-        pivotTable.setCache(wb.addPivotCache(rId));
+        XSSFPivotCacheDefinition pivotCacheDefinition = (XSSFPivotCacheDefinition) workbook.createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, XSSFFactory.getInstance(), tableId);
+        String rId = workbook.getRelationId(pivotCacheDefinition);
+        PackagePart pivotPackagePart = pivotTable.getPackagePart();
+        pivotPackagePart.addRelationship(pivotCacheDefinition.getPackagePart().getPartName(), TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT);
+        pivotTable.setPivotCacheDefinition(pivotCacheDefinition);
         
-        XSSFPivotCacheRecords pcr = (XSSFPivotCacheRecords) pcd.createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, XSSFFactory.getInstance());
-        
+        pivotTable.setCache(workbook.addPivotCache(rId));
+        pivotTable.addRelation(rId, pivotCacheDefinition);
+      
+        XSSFPivotCacheRecords pivotCacheRecords = (XSSFPivotCacheRecords) pivotCacheDefinition.createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, XSSFFactory.getInstance(), tableId);
+        pivotTable.setPivotCacheRecords(pivotCacheRecords);
+                
         return pivotTable;
     }
 }
