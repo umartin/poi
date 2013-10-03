@@ -16,7 +16,14 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
+import static org.apache.poi.POIXMLDocumentPart.DEFAULT_XML_OPTIONS;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 
@@ -30,22 +37,23 @@ public class XSSFPivotTable extends POIXMLDocumentPart{
     private XSSFPivotCacheRecords pivotCacheRecord;
 
     public XSSFPivotTable() {
-        
+        super();
+        pivotTableDefinition = CTPivotTableDefinition.Factory.newInstance();
     }
 
     public void setCache(CTPivotCache pivotCache) {
         this.pivotCache = pivotCache;
     }
 
-    public CTPivotCache getPivotCache() {
+    public CTPivotCache getCTPivotCache() {
         return pivotCache;
     }
 
-    public CTPivotTableDefinition getPivotTableDefinition() {
+    public CTPivotTableDefinition getCTPivotTableDefinition() {
         return pivotTableDefinition;
     }
 
-    public void setPivotTableDefinition(CTPivotTableDefinition pivotTableDefinition) {
+    public void setCTPivotTableDefinition(CTPivotTableDefinition pivotTableDefinition) {
         this.pivotTableDefinition = pivotTableDefinition;
     }
 
@@ -65,7 +73,15 @@ public class XSSFPivotTable extends POIXMLDocumentPart{
         this.pivotCacheRecord = pivotCacheRecord;
     }
     
-    
-    
-    
+    @Override
+    protected void commit() throws IOException {
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
+        //Sets the pivotTableDefinition tag
+        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTPivotTableDefinition.type.getName().
+                getNamespaceURI(), "pivotTableDefinition"));
+        pivotTableDefinition.save(out, xmlOptions);
+        out.close();
+    }
 }

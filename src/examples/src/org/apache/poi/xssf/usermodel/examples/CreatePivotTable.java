@@ -20,8 +20,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 
 /**
  *
@@ -31,9 +33,30 @@ public class CreatePivotTable {
     public static void main(String[] args) throws FileNotFoundException, IOException {
         Workbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) wb.createSheet();
-        sheet.createPivotTable();
-  
-        FileOutputStream fileOut = new FileOutputStream("ooxml-pivottable.xlsx");
+        XSSFPivotTable pivotTable = sheet.createPivotTable();
+        
+        CTPivotTableDefinition pivotTableDefinition = pivotTable.getCTPivotTableDefinition();
+        pivotTableDefinition.setMultipleFieldFilters(false);
+        pivotTableDefinition.setOutlineData(true);
+        pivotTableDefinition.setOutline(true);
+        pivotTableDefinition.setIndent(0);
+        pivotTableDefinition.setCreatedVersion(new Short("4"));
+        pivotTableDefinition.setItemPrintTitles(true);
+        pivotTableDefinition.setUseAutoFormatting(true);
+        pivotTableDefinition.setMinRefreshableVersion(new Short("3"));
+        pivotTableDefinition.setUpdatedVersion(new Short("4"));
+        pivotTableDefinition.setDataCaption("Values");
+        pivotTableDefinition.setApplyWidthHeightFormats(true);
+        pivotTableDefinition.setApplyAlignmentFormats(false);
+        pivotTableDefinition.setApplyPatternFormats(false);
+        pivotTableDefinition.setApplyFontFormats(false);
+        pivotTableDefinition.setApplyBorderFormats(false);
+        pivotTableDefinition.setApplyNumberFormats(false);
+        pivotTableDefinition.setDataOnRows(true);
+        pivotTableDefinition.setCacheId(pivotTable.getCTPivotCache().getCacheId());
+        pivotTableDefinition.setName("PivotTable1");
+
+        FileOutputStream fileOut = new FileOutputStream("ooxml-pivottable.zip");
         wb.write(fileOut);
         fileOut.close(); 
     }
