@@ -23,6 +23,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import static org.apache.poi.POIXMLDocumentPart.DEFAULT_XML_OPTIONS;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 
@@ -82,5 +83,16 @@ public class XSSFPivotTable extends POIXMLDocumentPart{
                 getNamespaceURI(), "pivotTableDefinition"));
         pivotTableDefinition.save(out, xmlOptions);
         out.close();
+    }
+    
+    public CTLocation setLocation(String ref) {
+        CTLocation location = pivotTableDefinition.addNewLocation();
+        //Provide some default settings
+        location.setFirstDataCol(1);
+        location.setFirstDataRow(1);
+        location.setFirstHeaderRow(1);
+        location.setRef(ref);
+        pivotTableDefinition.setLocation(location);
+        return location;
     }
 }
