@@ -52,7 +52,7 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
-        //Sets the pivotTableDefinition tag
+        //Sets the pivotCacheDefinition tag
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTPivotCacheDefinition.type.getName().
                 getNamespaceURI(), "pivotCacheDefinition"));
         ctPivotCacheDefinition.save(out, xmlOptions);
