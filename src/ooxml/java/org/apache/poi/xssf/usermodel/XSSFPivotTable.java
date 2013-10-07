@@ -86,13 +86,18 @@ public class XSSFPivotTable extends POIXMLDocumentPart{
     }
     
     public CTLocation setLocation(String ref) {
-        CTLocation location = pivotTableDefinition.addNewLocation();
-        //Provide some default settings
-        location.setFirstDataCol(1);
-        location.setFirstDataRow(1);
-        location.setFirstHeaderRow(1);
+        CTLocation location;
+        if(pivotTableDefinition.getLocation().isNil()) {
+            location = pivotTableDefinition.addNewLocation();
+            //Provide some default 
+            location.setFirstDataCol(1);
+            location.setFirstDataRow(1);
+            location.setFirstHeaderRow(1);
+        } else {
+            location = pivotTableDefinition.getLocation();
+        }
         location.setRef(ref);
-        pivotTableDefinition.setLocation(location);
+        pivotTableDefinition.setLocation(location); 
         return location;
     }
 }
