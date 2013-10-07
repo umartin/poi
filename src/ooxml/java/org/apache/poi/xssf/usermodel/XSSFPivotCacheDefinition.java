@@ -23,9 +23,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import static org.apache.poi.POIXMLDocumentPart.DEFAULT_XML_OPTIONS;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheDefinition;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSourceType;
 
 public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
     

@@ -23,7 +23,6 @@ import org.apache.poi.POIXMLDocumentPart;
 import static org.apache.poi.POIXMLDocumentPart.DEFAULT_XML_OPTIONS;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheRecords;
 
 public class XSSFPivotCacheRecords extends POIXMLDocumentPart {
@@ -33,7 +32,6 @@ public class XSSFPivotCacheRecords extends POIXMLDocumentPart {
     public XSSFPivotCacheRecords(){
         super();
         ctPivotCacheRecords = CTPivotCacheRecords.Factory.newInstance();
-        System.out.println(CTPivotCacheRecords.type.getName().toString());
     }
     
     @Override
