@@ -44,6 +44,10 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     public XSSFPivotTable() {
         super();
         pivotTableDefinition = CTPivotTableDefinition.Factory.newInstance();
+        pivotCache = CTPivotCache.Factory.newInstance();
+        pivotCacheDefinition = new XSSFPivotCacheDefinition();
+        pivotCacheRecord = new XSSFPivotCacheRecords();
+        setDefaultPivotTableDefinition();
     }
 
     public void setCache(CTPivotCache pivotCache) {
@@ -90,9 +94,36 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         out.close();
     }
     
+    private void setDefaultPivotTableDefinition() {
+        //Not included
+        //multipleFieldFilter (set when adding filter)
+        //outlineData (set when when grouping data)
+        //outline -II-
+        //dataCaption, the anme of the values area header
+        
+        //Indentation increment for compact rows
+        pivotTableDefinition.setIndent(0);
+        //The pivot version which created the pivot cache set to default value
+        pivotTableDefinition.setCreatedVersion(CREATED_VERSION);
+        //Minimun version required to update the pivot cache
+        pivotTableDefinition.setMinRefreshableVersion(MIN_REFRESHABLE_VERSION);
+        //Titles shown at the top of each page when printed
+        pivotTableDefinition.setItemPrintTitles(true);
+        //Set autoformat properties      
+        pivotTableDefinition.setUseAutoFormatting(true);
+        pivotTableDefinition.setApplyNumberFormats(true);
+        pivotTableDefinition.setApplyWidthHeightFormats(true);
+        pivotTableDefinition.setApplyAlignmentFormats(true);
+        pivotTableDefinition.setApplyPatternFormats(true);
+        pivotTableDefinition.setApplyFontFormats(true);
+        pivotTableDefinition.setApplyBorderFormats(true);
+        pivotTableDefinition.setCacheId(pivotCache.getCacheId());
+        pivotTableDefinition.setName("PivotTable"+pivotTableDefinition.getCacheId());
+    }
+    
     public CTLocation setLocation(String ref) {
         CTLocation location;
-        if(pivotTableDefinition.getLocation().isNil()) {
+        if(pivotTableDefinition.getLocation() == null) {
             location = pivotTableDefinition.addNewLocation();
             //Provide some default 
             location.setFirstDataCol(1);
