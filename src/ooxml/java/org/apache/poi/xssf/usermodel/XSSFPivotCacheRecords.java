@@ -33,6 +33,10 @@ public class XSSFPivotCacheRecords extends POIXMLDocumentPart {
         super();
         ctPivotCacheRecords = CTPivotCacheRecords.Factory.newInstance();
     }
+
+    public CTPivotCacheRecords getCtPivotCacheRecords() {
+        return ctPivotCacheRecords;
+    }
     
     @Override
     protected void commit() throws IOException {
