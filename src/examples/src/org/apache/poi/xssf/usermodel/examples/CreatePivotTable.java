@@ -20,9 +20,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFPivotCacheDefinition;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 
 /**
@@ -55,7 +57,7 @@ public class CreatePivotTable {
         pivotTableDefinition.setDataOnRows(true);
         pivotTableDefinition.setCacheId(pivotTable.getCTPivotCache().getCacheId());
         pivotTableDefinition.setName("PivotTable1");
-
+                
         FileOutputStream fileOut = new FileOutputStream("ooxml-pivottable.zip");
         wb.write(fileOut);
         fileOut.close(); 
