@@ -3402,6 +3402,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         XSSFPivotCacheRecords pivotCacheRecords = (XSSFPivotCacheRecords) pivotCacheDefinition.
                 createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, XSSFFactory.getInstance(), tableId);
         pivotTable.setPivotCacheRecords(pivotCacheRecords);
+        
+        //Set relationships id for pivotCacheDefinition to pivotCacheRecords
+        pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition().setId(pivotCacheDefinition.getRelationId(pivotCacheRecords));
                 
         return pivotTable;
     }
