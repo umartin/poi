@@ -16,8 +16,36 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
+import static org.apache.poi.POIXMLDocumentPart.DEFAULT_XML_OPTIONS;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheDefinition;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheRecords;
 
 public class XSSFPivotCacheRecords extends POIXMLDocumentPart {
+    
+    private CTPivotCacheRecords ctPivotCacheRecords;
+    
+    public XSSFPivotCacheRecords(){
+        super();
+        ctPivotCacheRecords = CTPivotCacheRecords.Factory.newInstance();
+        System.out.println(CTPivotCacheRecords.type.getName().toString());
+    }
+    
+    @Override
+    protected void commit() throws IOException {
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
+        //Sets the pivotCacheRecords tag
+        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTPivotCacheRecords.type.getName().
+                getNamespaceURI(), "pivotCacheRecords"));
+        ctPivotCacheRecords.save(out, xmlOptions);
+        out.close();
+    }
     
 }
