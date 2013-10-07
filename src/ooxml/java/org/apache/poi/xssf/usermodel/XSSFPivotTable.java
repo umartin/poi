@@ -30,7 +30,12 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinitio
 /**
  *
  */
-public class XSSFPivotTable extends POIXMLDocumentPart{
+public class XSSFPivotTable extends POIXMLDocumentPart {
+    
+    public final short CREATED_VERSION = 3;
+    public final short REFRESHED_VERSION = 3;
+    public final short MIN_REFRESHABLE_VERSION = 3;
+    
     private CTPivotCache pivotCache;
     private CTPivotTableDefinition pivotTableDefinition;
     private XSSFPivotCacheDefinition pivotCacheDefinition;
@@ -84,7 +89,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart{
         pivotTableDefinition.save(out, xmlOptions);
         out.close();
     }
-    
+        
     public CTLocation setLocation(String ref) {
         CTLocation location;
         if(pivotTableDefinition.getLocation().isNil()) {
