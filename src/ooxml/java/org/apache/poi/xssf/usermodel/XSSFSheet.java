@@ -3384,6 +3384,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         
         XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE, 
                 XSSFFactory.getInstance(), tableId);
+        pivotTable.setParentSheet(this);
         pivotTables.add(pivotTable);
         XSSFWorkbook workbook = getWorkbook();
         
