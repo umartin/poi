@@ -40,6 +40,11 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     private CTPivotTableDefinition pivotTableDefinition;
     private XSSFPivotCacheDefinition pivotCacheDefinition;
     private XSSFPivotCacheRecords pivotCacheRecord;
+    private XSSFSheet parentSheet;
+    private int referenceStartRow;
+    private int referenceEndRow;
+    private int referenceStartColumn;
+    private int referenceEndColumn;
 
     public XSSFPivotTable() {
         super();
@@ -56,6 +61,14 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     public CTPivotCache getCTPivotCache() {
         return pivotCache;
+    }
+
+    public XSSFSheet getParentSheet() {
+        return parentSheet;
+    }
+
+    public void setParentSheet(XSSFSheet parentSheet) {
+        this.parentSheet = parentSheet;
     }
 
     public CTPivotTableDefinition getCTPivotTableDefinition() {
@@ -80,6 +93,13 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     public void setPivotCacheRecords(XSSFPivotCacheRecords pivotCacheRecord) {
         this.pivotCacheRecord = pivotCacheRecord;
+    }
+    
+    public void setReferences(int startColumn, int startRow, int endColumn, int endRow) {
+        this.referenceStartColumn = startColumn;
+        this.referenceStartRow = startRow;
+        this.referenceEndColumn = endColumn;
+        this.referenceEndRow = endRow;
     }
     
     @Override
@@ -113,12 +133,12 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotTableDefinition.setItemPrintTitles(true);
         //Set autoformat properties      
         pivotTableDefinition.setUseAutoFormatting(true);
-        pivotTableDefinition.setApplyNumberFormats(true);
+        pivotTableDefinition.setApplyNumberFormats(false);
         pivotTableDefinition.setApplyWidthHeightFormats(true);
-        pivotTableDefinition.setApplyAlignmentFormats(true);
-        pivotTableDefinition.setApplyPatternFormats(true);
-        pivotTableDefinition.setApplyFontFormats(true);
-        pivotTableDefinition.setApplyBorderFormats(true);
+        pivotTableDefinition.setApplyAlignmentFormats(false);
+        pivotTableDefinition.setApplyPatternFormats(false);
+        pivotTableDefinition.setApplyFontFormats(false);
+        pivotTableDefinition.setApplyBorderFormats(false);
         pivotTableDefinition.setCacheId(pivotCache.getCacheId());
         pivotTableDefinition.setName("PivotTable"+pivotTableDefinition.getCacheId());
     }
@@ -138,4 +158,5 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotTableDefinition.setLocation(location); 
         return location;
     }
+    
 }
