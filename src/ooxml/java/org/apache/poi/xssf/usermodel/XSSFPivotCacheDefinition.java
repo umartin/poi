@@ -18,6 +18,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
 import static org.apache.poi.POIXMLDocumentPart.DEFAULT_XML_OPTIONS;
@@ -43,6 +44,8 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
         ctPivotCacheDefinition.setCreatedVersion(XSSFPivotTable.CREATED_VERSION);
         ctPivotCacheDefinition.setMinRefreshableVersion(XSSFPivotTable.MIN_REFRESHABLE_VERSION);
         ctPivotCacheDefinition.setRefreshedVersion(XSSFPivotTable.UPDATED_VERSION);
+        ctPivotCacheDefinition.setRefreshedBy("Apache POI");
+        ctPivotCacheDefinition.setRefreshedDate(new Date().getTime());
     }
     
     @Override
