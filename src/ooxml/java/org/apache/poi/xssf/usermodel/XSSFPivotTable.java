@@ -22,10 +22,13 @@ import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
 import static org.apache.poi.POIXMLDocumentPart.DEFAULT_XML_OPTIONS;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRecord;
 
 /**
  *
@@ -39,7 +42,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     private CTPivotCache pivotCache;
     private CTPivotTableDefinition pivotTableDefinition;
     private XSSFPivotCacheDefinition pivotCacheDefinition;
-    private XSSFPivotCacheRecords pivotCacheRecord;
+    private XSSFPivotCacheRecords pivotCacheRecords;
     private XSSFSheet parentSheet;
     private int referenceStartRow;
     private int referenceEndRow;
@@ -51,7 +54,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotTableDefinition = CTPivotTableDefinition.Factory.newInstance();
         pivotCache = CTPivotCache.Factory.newInstance();
         pivotCacheDefinition = new XSSFPivotCacheDefinition();
-        pivotCacheRecord = new XSSFPivotCacheRecords();
+        pivotCacheRecords = new XSSFPivotCacheRecords();
         setDefaultPivotTableDefinition();
     }
 
@@ -88,11 +91,11 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     }
 
     public XSSFPivotCacheRecords getPivotCacheRecords() {
-        return pivotCacheRecord;
+        return pivotCacheRecords;
     }
 
-    public void setPivotCacheRecords(XSSFPivotCacheRecords pivotCacheRecord) {
-        this.pivotCacheRecord = pivotCacheRecord;
+    public void setPivotCacheRecords(XSSFPivotCacheRecords pivotCacheRecords) {
+        this.pivotCacheRecords = pivotCacheRecords;
     }
     
     public void setReferences(int startColumn, int startRow, int endColumn, int endRow) {
@@ -159,4 +162,39 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         return location;
     }
     
+    public void createCacheRecords() {
+        pivotCacheRecords.getCtPivotCacheRecords().setCount(referenceEndRow-referenceStartRow);
+        CTRecord record;
+        Cell cell;
+        Row row;
+        for(int i = referenceStartRow+1; i <= referenceEndRow; i++) {
+            row = parentSheet.getRow(i);
+            record = pivotCacheRecords.getCtPivotCacheRecords().addNewR();
+            for(int j = referenceStartColumn; j <= referenceEndColumn; j++) {
+                cell = row.getCell(j);
+                switch (cell.getCellType()) {
+                    case (Cell.CELL_TYPE_BOOLEAN):
+                        record.addNewB().setV(cell.getBooleanCellValue());
+                        break;
+                    case (Cell.CELL_TYPE_STRING):
+                        record.addNewS().setV(cell.getStringCellValue());
+                        break;
+                    case (Cell.CELL_TYPE_NUMERIC):
+                        record.addNewN().setV(cell.getNumericCellValue());
+                        break;
+                    case (Cell.CELL_TYPE_BLANK):
+                        record.addNewM();
+                        break;
+                    /*case (Cell.CELL_TYPE_ERROR):
+                        r.addNewE().setV(String.valueOf(c.getErrorCellValue()));
+                        break;*/
+                    case (Cell.CELL_TYPE_FORMULA):
+                        record.addNewS().setV(cell.getCellFormula());
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }   
+    }
 }
