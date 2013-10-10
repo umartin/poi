@@ -1742,11 +1742,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
         CTPivotCache cache = caches.addNewPivotCache();
 
-        int cacheId = pivotCaches.size() + 1;
-
-        pivotCaches.add(cache);
-        cache.setCacheId(cacheId);
+        cache.setCacheId(pivotCaches.size());
         cache.setId(rId);
+        pivotCaches.add(cache);
         return cache;
     }
 }

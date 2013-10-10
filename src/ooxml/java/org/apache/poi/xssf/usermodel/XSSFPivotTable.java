@@ -107,6 +107,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotTableDefinition.setCreatedVersion(CREATED_VERSION);
         //Minimun version required to update the pivot cache
         pivotTableDefinition.setMinRefreshableVersion(MIN_REFRESHABLE_VERSION);
+        //Version of the application which "updated the spreadsheet last"
+        pivotTableDefinition.setUpdatedVersion(UPDATED_VERSION);
         //Titles shown at the top of each page when printed
         pivotTableDefinition.setItemPrintTitles(true);
         //Set autoformat properties      
@@ -120,7 +122,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotTableDefinition.setCacheId(pivotCache.getCacheId());
         pivotTableDefinition.setName("PivotTable"+pivotTableDefinition.getCacheId());
     }
-    
+   
     public CTLocation setLocation(String ref) {
         CTLocation location;
         if(pivotTableDefinition.getLocation() == null) {
