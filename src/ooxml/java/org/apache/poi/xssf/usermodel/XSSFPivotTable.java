@@ -145,6 +145,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotTableDefinition.setApplyBorderFormats(false);
         pivotTableDefinition.setCacheId(pivotCache.getCacheId());
         pivotTableDefinition.setName("PivotTable"+pivotTableDefinition.getCacheId());
+        pivotTableDefinition.setDataCaption("Values");
         
         //Set the default style for the pivot table
         CTPivotTableStyle style = pivotTableDefinition.addNewPivotTableStyleInfo();
