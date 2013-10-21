@@ -100,6 +100,14 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         this.pivotCacheRecords = pivotCacheRecords;
     }
     
+    /**
+     * Set the area of where the values will be gathered.
+     * Index starts at 0.
+     * @param startColumn, the first column in the area.
+     * @param startRow, the first row in the area.
+     * @param endColumn, the last column in the area.
+     * @param endRow, the last row in the area.
+     */
     public void setReferences(int startColumn, int startRow, int endColumn, int endRow) {
         this.referenceStartColumn = startColumn;
         this.referenceStartRow = startRow;
@@ -119,12 +127,14 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         out.close();
     }
     
+    /**
+     * Set default values for the table definition.
+     */
     private void setDefaultPivotTableDefinition() {
         //Not included
         //multipleFieldFilter (set when adding filter)
         //outlineData (set when when grouping data)
         //outline -II-
-        //dataCaption, the anme of the values area header
         
         //Indentation increment for compact rows
         pivotTableDefinition.setIndent(0);
@@ -158,6 +168,11 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         style.setShowRowHeaders(true);
     }
    
+   /**
+    * Set location of where the pivotTable will be placed.
+    * @param ref, coordinates in worksheet, eg. A1:D4
+    * @return the location of the table
+    */
     public CTLocation setLocation(String ref) {
         CTLocation location;
         if(pivotTableDefinition.getLocation() == null) {
@@ -174,17 +189,22 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         return location;
     }
     
+    /**
+     * Creates all pivotCacheRecords in the referenced area.
+     */
     public void createCacheRecords() {
         CTPivotCacheRecords records =  pivotCacheRecords.getCtPivotCacheRecords();
         records.setCount(referenceEndRow-referenceStartRow);
         CTRecord record;
         Cell cell;
         Row row;
+        //Goes through all cells, except the header, in the referenced area.
         for(int i = referenceStartRow+1; i <= referenceEndRow; i++) {
             row = parentSheet.getRow(i);
             record = records.addNewR();
             for(int j = referenceStartColumn; j <= referenceEndColumn; j++) {
                 cell = row.getCell(j);
+                //Creates a record based on the content of the cell.
                 switch (cell.getCellType()) {
                     case (Cell.CELL_TYPE_BOOLEAN):
                         record.addNewB().setV(cell.getBooleanCellValue());
