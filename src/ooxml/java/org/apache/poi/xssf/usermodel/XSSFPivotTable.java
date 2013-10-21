@@ -27,6 +27,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheRecords;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRecord;
@@ -174,13 +175,14 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     }
     
     public void createCacheRecords() {
-        pivotCacheRecords.getCtPivotCacheRecords().setCount(referenceEndRow-referenceStartRow);
+        CTPivotCacheRecords records =  pivotCacheRecords.getCtPivotCacheRecords();
+        records.setCount(referenceEndRow-referenceStartRow);
         CTRecord record;
         Cell cell;
         Row row;
         for(int i = referenceStartRow+1; i <= referenceEndRow; i++) {
             row = parentSheet.getRow(i);
-            record = pivotCacheRecords.getCtPivotCacheRecords().addNewR();
+            record = records.addNewR();
             for(int j = referenceStartColumn; j <= referenceEndColumn; j++) {
                 cell = row.getCell(j);
                 switch (cell.getCellType()) {
