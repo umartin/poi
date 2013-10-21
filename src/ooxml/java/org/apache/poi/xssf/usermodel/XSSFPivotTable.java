@@ -28,6 +28,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRecord;
 
 /**
@@ -144,6 +145,15 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotTableDefinition.setApplyBorderFormats(false);
         pivotTableDefinition.setCacheId(pivotCache.getCacheId());
         pivotTableDefinition.setName("PivotTable"+pivotTableDefinition.getCacheId());
+        
+        //Set the default style for the pivot table
+        CTPivotTableStyle style = pivotTableDefinition.addNewPivotTableStyleInfo();
+        style.setName("PivotStyleLight16");
+        style.setShowLastColumn(true);
+        style.setShowColStripes(false);
+        style.setShowRowStripes(false);
+        style.setShowColHeaders(true);
+        style.setShowRowHeaders(true);
     }
    
     public CTLocation setLocation(String ref) {
