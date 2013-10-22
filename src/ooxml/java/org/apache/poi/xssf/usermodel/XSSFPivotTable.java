@@ -57,7 +57,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotCache = CTPivotCache.Factory.newInstance();
         pivotCacheDefinition = new XSSFPivotCacheDefinition();
         pivotCacheRecords = new XSSFPivotCacheRecords();
-        setDefaultPivotTableDefinition();
+        //setDefaultPivotTableDefinition();
     }
 
     public void setCache(CTPivotCache pivotCache) {
@@ -130,7 +130,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     /**
      * Set default values for the table definition.
      */
-    private void setDefaultPivotTableDefinition() {
+    public void setDefaultPivotTableDefinition() {
         //Not included
         //multipleFieldFilter (set when adding filter)
         //outlineData (set when when grouping data)
@@ -171,16 +171,18 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
    /**
     * Set location of where the pivotTable will be placed.
     * @param ref, coordinates in worksheet, eg. A1:D4
+    * @param firstDataCol, set which column is the first containing data (index of pivot table)
+    * @param firstRowCol, set which row is the first containing data (index of pivot table)
+    * @param firstHeaderRow, set which row is the first header row (index of pivot table)
     * @return the location of the table
     */
-    public CTLocation setLocation(String ref) {
+    public CTLocation setLocation(String ref, int firstDataCol, int firstDataRow, int firstHeaderRow) {
         CTLocation location;
         if(pivotTableDefinition.getLocation() == null) {
             location = pivotTableDefinition.addNewLocation();
-            //Provide some default 
-            location.setFirstDataCol(1);
-            location.setFirstDataRow(1);
-            location.setFirstHeaderRow(1);
+            location.setFirstDataCol(firstDataCol);
+            location.setFirstDataRow(firstDataRow);
+            location.setFirstHeaderRow(firstHeaderRow);
         } else {
             location = pivotTableDefinition.getLocation();
         }

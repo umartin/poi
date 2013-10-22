@@ -3381,32 +3381,38 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             pivotTables = new ArrayList<>();
         }
         int tableId = pivotTables.size()+1;
-        
+        //Create relationship between pivotTable and the worksheet
         XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE, 
                 XSSFFactory.getInstance(), tableId);
         pivotTable.setParentSheet(this);
         pivotTables.add(pivotTable);
         XSSFWorkbook workbook = getWorkbook();
         
+        //Create relationship between the pivot cache defintion and the workbook
         XSSFPivotCacheDefinition pivotCacheDefinition = (XSSFPivotCacheDefinition) workbook.
                 createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, XSSFFactory.getInstance(), tableId);
         String rId = workbook.getRelationId(pivotCacheDefinition);
         //Create relationship between pivotTable and pivotCacheDefinition without creating a new instance
         PackagePart pivotPackagePart = pivotTable.getPackagePart();
         pivotPackagePart.addRelationship(pivotCacheDefinition.getPackagePart().getPartName(), 
-                TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT);
+                TargetMode.INTERNAL, XSSFRelation.PIVOT_CACHE_DEFINITION.getRelation());
+        
         pivotTable.setPivotCacheDefinition(pivotCacheDefinition);
         
         //Create pivotCache and sets up it's relationship with the workbook
         pivotTable.setCache(workbook.addPivotCache(rId));
         
+        //Creates default settings for the pivot table
+        pivotTable.setDefaultPivotTableDefinition();
+        
+        //Create relationship between pivotcacherecord and pivotcachedefinition
         XSSFPivotCacheRecords pivotCacheRecords = (XSSFPivotCacheRecords) pivotCacheDefinition.
                 createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, XSSFFactory.getInstance(), tableId);
         pivotTable.setPivotCacheRecords(pivotCacheRecords);
         
         //Set relationships id for pivotCacheDefinition to pivotCacheRecords
         pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition().setId(pivotCacheDefinition.getRelationId(pivotCacheRecords));
-                
+ 
         return pivotTable;
     }
 }
