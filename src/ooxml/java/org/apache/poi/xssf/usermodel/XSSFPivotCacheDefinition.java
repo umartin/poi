@@ -46,6 +46,7 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
         ctPivotCacheDefinition.setRefreshedVersion(XSSFPivotTable.UPDATED_VERSION);
         ctPivotCacheDefinition.setRefreshedBy("Apache POI");
         ctPivotCacheDefinition.setRefreshedDate(new Date().getTime());
+        ctPivotCacheDefinition.setRefreshOnLoad(true);
     }
     
     @Override
