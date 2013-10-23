@@ -25,6 +25,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTI;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTItems;
@@ -242,26 +243,18 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     }
     
     public void addPivotFields() {
-        CTPivotFields pivotFields = pivotTableDefinition.addNewPivotFields();
-        
-        AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
-        long startRow = pivotTableDefinition.getLocation().getFirstDataRow() + 
-                pivotArea.getFirstCell().getRow();
-        long endRow = pivotArea.getLastCell().getRow();     
-        long startColumn = pivotArea.getFirstCell().getCol();
-        long endColumn = pivotArea.getLastCell().getCol();
-        
+        CTPivotFields pivotFields = pivotTableDefinition.addNewPivotFields();     
         CTPivotField pivotField;
 
-        for(long i = startColumn; i <= endColumn; i++) {
+        for(long i = referenceStartColumn; i <= referenceEndColumn; i++) {
             pivotField = pivotFields.addNewPivotField();
-            if((i-startColumn) == pivotTableDefinition.getLocation().getFirstDataCol()) {
+            if((i-referenceStartColumn) == pivotTableDefinition.getLocation().getFirstDataCol()) {
                 pivotField.setDataField(true);
             } else {
                 CTItems items = pivotField.addNewItems();
                 //Set dynamic?
                 pivotField.setAxis(STAxis.AXIS_ROW);
-                for(long j = startRow; j <= endRow; j++) {
+                for(long j = referenceStartRow; j <= referenceEndRow; j++) {
                     items.addNewItem().setT(STItemType.DEFAULT);
                 }   
                 items.setCount(items.getItemList().size());
@@ -270,12 +263,10 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotFields.setCount(pivotFields.getPivotFieldList().size());       
     }
     
-    public void addRowItems() {
-        
-        AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
-        long startRow = pivotTableDefinition.getLocation().getFirstDataRow() + 
-                pivotArea.getFirstCell().getRow();
-        long endRow = pivotArea.getLastCell().getRow();     
+    public void addRowItems(AreaReference column) { 
+
+        long startRow = column.getFirstCell().getRow();
+        long endRow = column.getLastCell().getRow();     
 
         CTRowItems rowItems = pivotTableDefinition.addNewRowItems();
 
