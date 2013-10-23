@@ -25,8 +25,8 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColItems;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTI;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTItems;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
@@ -263,12 +263,12 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotFields.setCount(pivotFields.getPivotFieldList().size());       
     }
     
-    public void addRowItems(AreaReference column) { 
+    public CTRowItems createRowItems(AreaReference column) { 
 
         long startRow = column.getFirstCell().getRow();
         long endRow = column.getLastCell().getRow();     
 
-        CTRowItems rowItems = pivotTableDefinition.addNewRowItems();
+        CTRowItems rowItems = CTRowItems.Factory.newInstance();
 
         for(long j = startRow; j <= endRow; j++) {
             if(j == endRow) {
@@ -280,5 +280,19 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
             }
         }
         rowItems.setCount(rowItems.getIList().size());
+        return rowItems;
     }     
+    public CTColItems createColumnItems(AreaReference column) { 
+
+        long startColumn = column.getFirstCell().getCol();
+        long endColumn = column.getLastCell().getCol();    
+
+        CTColItems colItems = CTColItems.Factory.newInstance();
+        
+        for(long j = startColumn; j <= endColumn; j++) {
+            colItems.addNewI();
+        }
+        colItems.setCount(colItems.getIList().size());
+        return colItems;
+    }   
 }
