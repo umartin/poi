@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTI;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTItems;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
@@ -35,6 +36,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRecord;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRowItems;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STAxis;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STItemType;
 
@@ -139,7 +141,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     public void setDefaultPivotTableDefinition() {
         //Not included
         //multipleFieldFilter (set when adding filter)
-        //outlineData (set when when grouping data)
+        //outlineData (set when grouping data)
         //outline -II-
         
         //Indentation increment for compact rows
@@ -239,7 +241,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }   
     }
     
-    public void createPivotFields() {
+    public void addPivotFields() {
         CTPivotFields pivotFields = pivotTableDefinition.addNewPivotFields();
         
         AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
@@ -267,4 +269,25 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }        
         pivotFields.setCount(pivotFields.getPivotFieldList().size());       
     }
+    
+    public void addRowItems() {
+        
+        AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
+        long startRow = pivotTableDefinition.getLocation().getFirstDataRow() + 
+                pivotArea.getFirstCell().getRow();
+        long endRow = pivotArea.getLastCell().getRow();     
+
+        CTRowItems rowItems = pivotTableDefinition.addNewRowItems();
+
+        for(long j = startRow; j <= endRow; j++) {
+            if(j == endRow) {
+                CTI rowItem = rowItems.addNewI();
+                rowItem.setT(STItemType.GRAND);
+                rowItem.addNewX(); 
+            } else {
+                 rowItems.addNewI().addNewX();
+            }
+        }
+        rowItems.setCount(rowItems.getIList().size());
+    }     
 }
