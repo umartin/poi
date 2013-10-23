@@ -24,13 +24,19 @@ import static org.apache.poi.POIXMLDocumentPart.DEFAULT_XML_OPTIONS;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTItems;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheRecords;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotField;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRecord;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STAxis;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STItemType;
 
 /**
  *
@@ -231,5 +237,34 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
                 }
             }
         }   
+    }
+    
+    public void createPivotFields() {
+        CTPivotFields pivotFields = pivotTableDefinition.addNewPivotFields();
+        
+        AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
+        long startRow = pivotTableDefinition.getLocation().getFirstDataRow() + 
+                pivotArea.getFirstCell().getRow();
+        long endRow = pivotArea.getLastCell().getRow();     
+        long startColumn = pivotArea.getFirstCell().getCol();
+        long endColumn = pivotArea.getLastCell().getCol();
+        
+        CTPivotField pivotField;
+
+        for(long i = startColumn; i <= endColumn; i++) {
+            pivotField = pivotFields.addNewPivotField();
+            if((i-startColumn) == pivotTableDefinition.getLocation().getFirstDataCol()) {
+                pivotField.setDataField(true);
+            } else {
+                CTItems items = pivotField.addNewItems();
+                //Set dynamic?
+                pivotField.setAxis(STAxis.AXIS_ROW);
+                for(long j = startRow; j <= endRow; j++) {
+                    items.addNewItem().setT(STItemType.DEFAULT);
+                }   
+                items.setCount(items.getItemList().size());
+            }
+        }        
+        pivotFields.setCount(pivotFields.getPivotFieldList().size());       
     }
 }
