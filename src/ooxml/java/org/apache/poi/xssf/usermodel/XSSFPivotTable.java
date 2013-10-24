@@ -263,15 +263,12 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotFields.setCount(pivotFields.getPivotFieldList().size());       
     }
     
-    public CTRowItems createRowItems(AreaReference column) { 
-
-        long startRow = column.getFirstCell().getRow();
-        long endRow = column.getLastCell().getRow();     
+    public CTRowItems createRowItems(int numberOfRows) {  
 
         CTRowItems rowItems = CTRowItems.Factory.newInstance();
 
-        for(long j = startRow; j <= endRow; j++) {
-            if(j == endRow) {
+        for(long j = 0; j < numberOfRows; j++) {
+            if(j == numberOfRows) {
                 CTI rowItem = rowItems.addNewI();
                 rowItem.setT(STItemType.GRAND);
                 rowItem.addNewX(); 
@@ -282,14 +279,11 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         rowItems.setCount(rowItems.getIList().size());
         return rowItems;
     }     
-    public CTColItems createColumnItems(AreaReference column) { 
-
-        long startColumn = column.getFirstCell().getCol();
-        long endColumn = column.getLastCell().getCol();    
+    public CTColItems createColumnItems(int numberOfColumns) { 
 
         CTColItems colItems = CTColItems.Factory.newInstance();
         
-        for(long j = startColumn; j <= endColumn; j++) {
+        for(long j = 0; j < numberOfColumns; j++) {
             colItems.addNewI();
         }
         colItems.setCount(colItems.getIList().size());
