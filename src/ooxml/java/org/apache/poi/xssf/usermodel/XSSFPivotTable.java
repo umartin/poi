@@ -262,26 +262,4 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }         
         pivotFields.setCount(pivotFields.getPivotFieldList().size());       
     }
-    
-    public CTRowItems createRowItems(int numberOfRows) {  
-
-        CTRowItems rowItems = CTRowItems.Factory.newInstance();
-
-        for(long j = 0; j < numberOfRows; j++) {
-            rowItems.addNewI().addNewX();
-        }
-        rowItems.setCount(rowItems.getIList().size());
-        return rowItems;
-    }     
-    //Dependent on 
-    public CTColItems createColumnItems(int numberOfColumns) { 
-
-        CTColItems colItems = CTColItems.Factory.newInstance();
-        
-        for(long j = 0; j < numberOfColumns; j++) {
-            colItems.addNewI();
-        }
-        colItems.setCount(colItems.getIList().size());
-        return colItems;
-    }   
 }
