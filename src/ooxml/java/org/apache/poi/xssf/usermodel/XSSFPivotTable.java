@@ -18,6 +18,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
 import static org.apache.poi.POIXMLDocumentPart.DEFAULT_XML_OPTIONS;
@@ -26,8 +27,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColItems;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTI;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColFields;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataField;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTItems;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
@@ -37,8 +39,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRecord;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRowItems;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRowFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STAxis;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STItemType;
 
 /**
@@ -166,6 +169,17 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotTableDefinition.setCacheId(pivotCache.getCacheId());
         pivotTableDefinition.setName("PivotTable"+pivotTableDefinition.getCacheId());
         pivotTableDefinition.setDataCaption("Values");
+        //Init pivot fields
+        pivotTableDefinition.addNewPivotFields();
+        //Init row fields
+        pivotTableDefinition.addNewRowFields();
+        //Init column fields
+        pivotTableDefinition.addNewColFields();
+        //Init page fields
+        //pivotTableDefinition.addNewPageFields();
+        //Init data fields
+        pivotTableDefinition.addNewDataFields();
+        
         
         //Set the default style for the pivot table
         CTPivotTableStyle style = pivotTableDefinition.addNewPivotTableStyleInfo();
@@ -261,5 +275,62 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
             }
         }         
         pivotFields.setCount(pivotFields.getPivotFieldList().size());       
+    }
+    
+    public void addRowLabel(int columnIndex) {
+        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
+        AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
+        int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
+    
+        List<CTPivotField> pivotFieldList = pivotTableDefinition.getPivotFields().getPivotFieldList();
+        CTPivotField pivotField = CTPivotField.Factory.newInstance();
+        CTItems items = pivotField.addNewItems();
+
+        pivotField.setAxis(STAxis.AXIS_ROW);
+        for(int i = 0; i < lastRowIndex; i++) {
+            items.addNewItem().setT(STItemType.DEFAULT);
+        }
+        items.setCount(items.getItemList().size());
+        pivotFieldList.add(columnIndex, pivotField);
+        
+        pivotFields.setPivotFieldArray(pivotFieldList.toArray(new CTPivotField[pivotFieldList.size()]));
+        pivotFields.setCount(pivotFieldList.size());
+        
+        CTRowFields rowFields = pivotTableDefinition.getRowFields();
+        rowFields.addNewField().setX(columnIndex);
+        rowFields.setCount(rowFields.getFieldList().size());
+    }
+
+    public void addColumnLabel(STDataConsolidateFunction.Enum function, int columnIndex) {
+        addDataColumn(columnIndex);       
+        addDataField(function, columnIndex);
+        if (pivotTableDefinition.getDataFields().getCount() > 1) {
+            CTColFields colFields = pivotTableDefinition.getColFields();
+            colFields.addNewField().setX(-2);
+            colFields.setCount(colFields.getFieldList().size());
+        }
+    }
+    
+    private void addDataField(STDataConsolidateFunction.Enum function, int index) {
+        CTDataFields dataFields = pivotTableDefinition.getDataFields();
+        CTDataField dataField = dataFields.addNewDataField();
+        dataField.setSubtotal(function);
+        dataField.setFld(index);          
+        dataFields.setCount(dataFields.getDataFieldList().size());
+    }
+    
+    public void addReportFilter() {
+        
+    }
+    
+    public void addDataColumn(int columnIndex) {
+        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
+        List<CTPivotField> pivotFieldList = pivotFields.getPivotFieldList();
+        CTPivotField pivotField = CTPivotField.Factory.newInstance();
+        
+        pivotField.setDataField(true);
+        pivotFieldList.add(columnIndex, pivotField);
+        pivotFields.setCount(pivotFieldList.size());
+        pivotFields.setPivotFieldArray(pivotFieldList.toArray(new CTPivotField[pivotFieldList.size()]));
     }
 }
