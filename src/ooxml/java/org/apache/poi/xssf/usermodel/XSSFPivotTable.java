@@ -256,27 +256,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }   
     }
     
-    public void addPivotFields() {
-        CTPivotFields pivotFields = pivotTableDefinition.addNewPivotFields();     
-        CTPivotField pivotField;
-
-        for(long i = referenceStartColumn; i <= referenceEndColumn; i++) {
-            pivotField = pivotFields.addNewPivotField();
-            if((i-referenceStartColumn) >= pivotTableDefinition.getLocation().getFirstDataCol()) {
-                pivotField.setDataField(true);
-            } else {
-                CTItems items = pivotField.addNewItems();
-                //Set dynamic?
-                pivotField.setAxis(STAxis.AXIS_ROW);
-                for(long j = referenceStartRow; j <= referenceEndRow; j++) {
-                    items.addNewItem().setT(STItemType.DEFAULT);
-                }   
-                items.setCount(items.getItemList().size());
-            }
-        }         
-        pivotFields.setCount(pivotFields.getPivotFieldList().size());       
-    }
-    
     public void addRowLabel(int columnIndex) {
         CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
         AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
