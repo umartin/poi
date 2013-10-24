@@ -248,7 +248,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
         for(long i = referenceStartColumn; i <= referenceEndColumn; i++) {
             pivotField = pivotFields.addNewPivotField();
-            if((i-referenceStartColumn) == pivotTableDefinition.getLocation().getFirstDataCol()) {
+            if((i-referenceStartColumn) >= pivotTableDefinition.getLocation().getFirstDataCol()) {
                 pivotField.setDataField(true);
             } else {
                 CTItems items = pivotField.addNewItems();
