@@ -27,20 +27,10 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheSource;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColItems;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTI;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTItems;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheDefinition;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRowFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRowItems;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheetSource;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STAxis;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STItemType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSourceType;
 
 /**
@@ -67,20 +57,20 @@ public class CreatePivotTable {
         definition.setOutline(true);
         definition.setOutlineData(true);
         
-        pivotTable.setLocation("F5:G8", 1, 1, 1);
+        pivotTable.setLocation("H5:I6", 1, 1, 1);
         //Cache definition
         CTPivotCacheDefinition cacheDef = pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition();
         CTCacheSource source = cacheDef.addNewCacheSource();
         source.setType(STSourceType.WORKSHEET);
         CTWorksheetSource worksheetSource = source.addNewWorksheetSource();
         worksheetSource.setSheet(sheet.getSheetName());
-        worksheetSource.setRef("A1:B3");
-       
+        worksheetSource.setRef("A1:C3");
+        
         int rowStart = 0;
         int rowEnd = 2;
         
         int columnStart = 0;
-        int columnEnd = 1;
+        int columnEnd = 2;
         
         pivotTable.setReferences(columnStart, rowStart, columnEnd, rowEnd);
         pivotTable.createCacheRecords();
@@ -90,51 +80,12 @@ public class CreatePivotTable {
         CTCacheFields cFields = cacheDef.addNewCacheFields();
         //Create cachefield/s and empty SharedItems
         pivotTable.getPivotCacheDefinition().createCacheFields(sheet);
-                
-        //Set dynamically when knowing how many fields to display
-        CTPivotFields fields = definition.addNewPivotFields();
-        //fields.setCount(2);
-        CTPivotField field = fields.addNewPivotField();
-        field.setShowAll(true);
-        field.setAxis(STAxis.AXIS_ROW);
-        CTPivotField field2 = fields.addNewPivotField();
-        field2.setShowAll(true);
-        field2.setDataField(true);
+                       
+        pivotTable.addRowLabel(0);
+        //pivotTable.addColumnLabel(STDataConsolidateFunction.AVERAGE,1);
+        pivotTable.addColumnLabel(STDataConsolidateFunction.SUM, 2);
+        pivotTable.addRowLabel(1);
         
-        //Fill out the fields
-        CTItems items = field.addNewItems();
-        items.addNewItem().setT(STItemType.DEFAULT);
-        items.addNewItem().setT(STItemType.DEFAULT);
-        items.addNewItem().setT(STItemType.DEFAULT);
-        //items.setCount(3);
-
-        //Set rowfields
-        CTRowFields rowFields = definition.addNewRowFields();
-        rowFields.addNewField().setX(0);
-        //rowFields.setCount(1);
-        
-        //Add rowItems
-        CTRowItems rowItems = definition.addNewRowItems();
-        rowItems.addNewI().addNewX();
-        rowItems.addNewI().addNewX().setV(1);
-        CTI rowItem = rowItems.addNewI();
-        rowItem.setT(STItemType.GRAND);
-        rowItem.addNewX();
-        //rowItems.setCount(3);
-        
-        //Set colItems
-        CTColItems colItems = definition.addNewColItems();
-        colItems.addNewI();
-        //colItems.setCount(1);
-                
-        //Set datafields, hard coded
-        CTDataFields dataFields = definition.addNewDataFields();
-        //dataFields.setCount(1);
-        CTDataField dataField = dataFields.addNewDataField();
-        dataField.setName("Sum of #");
-        //Index of the field to bee summarized
-        dataField.setFld(1);
-               
         FileOutputStream fileOut = new FileOutputStream(fileName);
         wb.write(fileOut);
         fileOut.close();
@@ -147,17 +98,23 @@ public class CreatePivotTable {
         cell.setCellValue("Names");
         Cell cell2 = row1.createCell((short) 1);
         cell2.setCellValue("#");
+        Cell cell7 = row1.createCell((short) 2);
+        cell7.setCellValue("%");
 
         Row row2 = sheet.createRow((short) 1);
         Cell cell3 = row2.createCell((short) 0);
         cell3.setCellValue("Jessica");
         Cell cell4 = row2.createCell((short) 1);
         cell4.setCellValue(3);
+        Cell cell8 = row2.createCell((short) 2);
+        cell8.setCellValue(85);
 
         Row row3 = sheet.createRow((short) 2);
         Cell cell5 = row3.createCell((short) 0);
         cell5.setCellValue("Sofia");
         Cell cell6 = row3.createCell((short) 1);
-        cell6.setCellValue(2);
+        cell6.setCellValue(3);
+        Cell cell9 = row3.createCell((short) 2);
+        cell9.setCellValue(82);
     }
 }
