@@ -32,6 +32,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataField;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTItems;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageField;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheRecords;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotField;
@@ -351,7 +353,36 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotFields.setPivotFieldArray(pivotFieldList.toArray(new CTPivotField[pivotFieldList.size()]));
     }
     
-    public void addReportFilter() {
+    public void addReportFilter(int index) {
+        CTPivotFields pivotFields;
+        if (pivotTableDefinition.getPivotFields() != null) {
+            pivotFields = pivotTableDefinition.getPivotFields();            
+        } else {
+            pivotFields = pivotTableDefinition.addNewPivotFields();
+        }
+        AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
+        int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
+    
+        List<CTPivotField> pivotFieldList = pivotTableDefinition.getPivotFields().getPivotFieldList();
+        CTPivotField pivotField = CTPivotField.Factory.newInstance();
+        CTItems items = pivotField.addNewItems();
+
+        pivotField.setAxis(STAxis.AXIS_PAGE);
+        for(int i = 0; i < lastRowIndex; i++) {
+            items.addNewItem().setT(STItemType.DEFAULT);
+        }
+        items.setCount(items.getItemList().size());
+        pivotFieldList.add(index, pivotField);
         
+        CTPageFields pageFields;
+        if (pivotTableDefinition.getPageFields()!= null) {
+            pageFields = pivotTableDefinition.getPageFields();            
+        } else {
+            pageFields = pivotTableDefinition.addNewPageFields();
+        }
+        
+        CTPageField pageField = pageFields.addNewPageField();
+        pageField.setHier(-1);
+        pageField.setFld(index);
     }
 }
