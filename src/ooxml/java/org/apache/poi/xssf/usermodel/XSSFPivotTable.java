@@ -174,7 +174,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         //Init row fields
         pivotTableDefinition.addNewRowFields();
         //Init column fields
-        pivotTableDefinition.addNewColFields();
+        //pivotTableDefinition.addNewColFields();
         //Init page fields
         //pivotTableDefinition.addNewPageFields();
         //Init data fields
@@ -256,6 +256,10 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }   
     }
     
+    /**
+     * Add a row label using data from the given column.
+     * @param columnIndex, the index of the column to be used as row label.
+     */
     public void addRowLabel(int columnIndex) {
         CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
         AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
@@ -279,9 +283,16 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         rowFields.addNewField().setX(columnIndex);
         rowFields.setCount(rowFields.getFieldList().size());
     }
-
+    
+    /**
+     * Add a column label using data from the given column and specified function
+     * @param columnIndex, the index of the column to be used as column label.
+     * @param function, the function to be used on the data
+     * The following functions exists:
+     * Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
+     */
     public void addColumnLabel(STDataConsolidateFunction.Enum function, int columnIndex) {
-        addDataColumn(columnIndex);       
+        addDataColumn(columnIndex, true);       
         addDataField(function, columnIndex);
         if (pivotTableDefinition.getDataFields().getCount() > 1) {
             CTColFields colFields = pivotTableDefinition.getColFields();
@@ -290,6 +301,13 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }
     }
     
+    /**
+     * Add data field with data from the given column and specified function.
+     * @param function, the function to be used on the data
+     * @param index, the index of the column to be used as column label.
+     * The following functions exists:
+     * Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
+     */
     private void addDataField(STDataConsolidateFunction.Enum function, int index) {
         CTDataFields dataFields = pivotTableDefinition.getDataFields();
         CTDataField dataField = dataFields.addNewDataField();
@@ -298,18 +316,27 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         dataFields.setCount(dataFields.getDataFieldList().size());
     }
     
-    public void addReportFilter() {
-        
-    }
-    
-    public void addDataColumn(int columnIndex) {
+    /**
+     * All columns in the referenced area must be added to the pivot table, either as
+     * a column/row label or as a data column. Not all data columns must be displayed in the
+     * pivot table.
+     * 
+     * Add column containing data from the referenced area.
+     * @param columnIndex, the index of the column containing the data
+     * @param isDataField, true if the data should be displayed in the pivot table.
+     */
+    public void addDataColumn(int columnIndex, boolean isDataField) {
         CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
         List<CTPivotField> pivotFieldList = pivotFields.getPivotFieldList();
         CTPivotField pivotField = CTPivotField.Factory.newInstance();
         
-        pivotField.setDataField(true);
+        pivotField.setDataField(isDataField);         
         pivotFieldList.add(columnIndex, pivotField);
         pivotFields.setCount(pivotFieldList.size());
         pivotFields.setPivotFieldArray(pivotFieldList.toArray(new CTPivotField[pivotFieldList.size()]));
+    }
+    
+    public void addReportFilter() {
+        
     }
 }
