@@ -169,18 +169,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotTableDefinition.setCacheId(pivotCache.getCacheId());
         pivotTableDefinition.setName("PivotTable"+pivotTableDefinition.getCacheId());
         pivotTableDefinition.setDataCaption("Values");
-        //Init pivot fields
-        pivotTableDefinition.addNewPivotFields();
-        //Init row fields
-        pivotTableDefinition.addNewRowFields();
-        //Init column fields
-        //pivotTableDefinition.addNewColFields();
-        //Init page fields
-        //pivotTableDefinition.addNewPageFields();
-        //Init data fields
-        pivotTableDefinition.addNewDataFields();
-        
-        
+  
         //Set the default style for the pivot table
         CTPivotTableStyle style = pivotTableDefinition.addNewPivotTableStyleInfo();
         style.setName("PivotStyleLight16");
@@ -261,7 +250,12 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * @param columnIndex, the index of the column to be used as row label.
      */
     public void addRowLabel(int columnIndex) {
-        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
+        CTPivotFields pivotFields;
+        if (pivotTableDefinition.getPivotFields() != null) {
+            pivotFields = pivotTableDefinition.getPivotFields();            
+        } else {
+            pivotFields = pivotTableDefinition.addNewPivotFields();
+        }
         AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
         int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
     
@@ -279,7 +273,13 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotFields.setPivotFieldArray(pivotFieldList.toArray(new CTPivotField[pivotFieldList.size()]));
         pivotFields.setCount(pivotFieldList.size());
         
-        CTRowFields rowFields = pivotTableDefinition.getRowFields();
+        CTRowFields rowFields;
+        if(pivotTableDefinition.getRowFields() != null) {
+            rowFields = pivotTableDefinition.getRowFields();
+        } else {
+            rowFields = pivotTableDefinition.addNewRowFields();
+        }
+        
         rowFields.addNewField().setX(columnIndex);
         rowFields.setCount(rowFields.getFieldList().size());
     }
@@ -295,7 +295,12 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         addDataColumn(columnIndex, true);       
         addDataField(function, columnIndex);
         if (pivotTableDefinition.getDataFields().getCount() > 1) {
-            CTColFields colFields = pivotTableDefinition.getColFields();
+            CTColFields colFields;
+            if(pivotTableDefinition.getColFields() != null) {
+                colFields = pivotTableDefinition.getColFields();    
+            } else {
+                colFields = pivotTableDefinition.addNewColFields();
+            }     
             colFields.addNewField().setX(-2);
             colFields.setCount(colFields.getFieldList().size());
         }
@@ -309,7 +314,12 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
      */
     private void addDataField(STDataConsolidateFunction.Enum function, int index) {
-        CTDataFields dataFields = pivotTableDefinition.getDataFields();
+        CTDataFields dataFields;
+        if(pivotTableDefinition.getDataFields() != null) {
+            dataFields = pivotTableDefinition.getDataFields();
+        } else {
+            dataFields = pivotTableDefinition.addNewDataFields();
+        }
         CTDataField dataField = dataFields.addNewDataField();
         dataField.setSubtotal(function);
         dataField.setFld(index);          
@@ -326,7 +336,12 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * @param isDataField, true if the data should be displayed in the pivot table.
      */
     public void addDataColumn(int columnIndex, boolean isDataField) {
-        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
+        CTPivotFields pivotFields;
+        if (pivotTableDefinition.getPivotFields() != null) {
+            pivotFields = pivotTableDefinition.getPivotFields();            
+        } else {
+            pivotFields = pivotTableDefinition.addNewPivotFields();
+        }
         List<CTPivotField> pivotFieldList = pivotFields.getPivotFieldList();
         CTPivotField pivotField = CTPivotField.Factory.newInstance();
         
