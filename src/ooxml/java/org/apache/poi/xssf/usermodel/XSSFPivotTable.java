@@ -353,6 +353,10 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotFields.setPivotFieldArray(pivotFieldList.toArray(new CTPivotField[pivotFieldList.size()]));
     }
     
+    /**
+     * Add filter for the column with the corresponding index 
+     * @param index, of the column to filter on
+     */
     public void addReportFilter(int index) {
         CTPivotFields pivotFields;
         if (pivotTableDefinition.getPivotFields() != null) {
