@@ -19,15 +19,12 @@ package org.apache.poi.xssf.usermodel.examples;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheField;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColItems;
@@ -41,7 +38,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRowFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRowItems;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSharedItems;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheetSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STAxis;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STItemType;
@@ -79,10 +75,7 @@ public class CreatePivotTable {
         CTWorksheetSource worksheetSource = source.addNewWorksheetSource();
         worksheetSource.setSheet(sheet.getSheetName());
         worksheetSource.setRef("A1:B3");
-        
-        CTCacheFields cFields = cacheDef.addNewCacheFields();
-        cFields.setCount(2);
-        
+       
         int rowStart = 0;
         int rowEnd = 2;
         
@@ -93,104 +86,14 @@ public class CreatePivotTable {
         pivotTable.createCacheRecords();
    
         cacheDef.setRecordCount(pivotTable.getPivotCacheRecords().getCtPivotCacheRecords().getCount());
-        Row row;
-        Cell c;     
-        //kolla om det spelar nÃ¥gon roll att vi alltid sÃ¤tter?
-        for(int i=columnStart; i<=columnEnd; i++) {
-            row = sheet.getRow(rowStart);
-            CTCacheField cf = cFields.addNewCacheField();
-            //General number format
-            cf.setNumFmtId(0);
-            cf.setName(row.getCell(i).getStringCellValue());
-            CTSharedItems shared = cf.addNewSharedItems();
-            shared.setCount(0);
-            shared.setContainsBlank(false);
-            shared.setContainsDate(false);
-            shared.setContainsInteger(false);
-            shared.setContainsMixedTypes(false);
-            shared.setContainsNonDate(false);
-            shared.setContainsNumber(false);
-            shared.setContainsSemiMixedTypes(false);
-            shared.setContainsString(false);
-            for(int j=rowStart+1; j<=rowEnd; j++) {
-                row = sheet.getRow(j);
-                c = row.getCell(i);
-                switch (c.getCellType()) {
-                    case (Cell.CELL_TYPE_BOOLEAN):
-                        shared.addNewB().setV(c.getBooleanCellValue());
-                        shared.setCount(shared.getCount()+1);
-                        break;
-                    case (Cell.CELL_TYPE_STRING):
-                        shared.addNewS().setV(c.getStringCellValue());
-                        shared.setCount(shared.getCount()+1);
-                        shared.setContainsSemiMixedTypes(true);
-                        shared.setContainsString(true);
-                        break;
-                    case (Cell.CELL_TYPE_NUMERIC):
-                        //shared.addNewN().setV(c.getNumericCellValue());
-                        shared.setCount(shared.getCount()+1);
-                        shared.setContainsNumber(true);
-                        if(c.getNumericCellValue()%1==0) {
-                            shared.setContainsInteger(true);
-                        }
-                        if(HSSFDateUtil.isCellDateFormatted(c)) {
-                            shared.setContainsDate(true);
-                        }
-                        break;
-                    case (Cell.CELL_TYPE_BLANK):
-                        shared.addNewM();
-                        shared.setContainsBlank(true);
-                        shared.setCount(shared.getCount()+1);
-                        break;
-                    case (Cell.CELL_TYPE_ERROR):
-                        shared.addNewE().setV(String.valueOf(c.getErrorCellValue()));
-                        shared.setCount(shared.getCount()+1);
-                        break;
-                    case (Cell.CELL_TYPE_FORMULA):
-                        shared.addNewS().setV(c.getCellFormula());
-                        shared.setCount(shared.getCount()+1);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if(shared.getBList().size() > 0 && shared.getBList().size() < shared.getCount() ||
-                    shared.getDList().size() > 0 && shared.getDList().size() < shared.getCount() ||
-                    shared.getEList().size() > 0 && shared.getEList().size() < shared.getCount() ||
-                    shared.getMList().size() > 0 && shared.getMList().size() < shared.getCount() ||
-                    shared.getNList().size() > 0 && shared.getNList().size() < shared.getCount() ||
-                    shared.getSList().size() > 0 && shared.getSList().size() < shared.getCount()) {
-                shared.setContainsMixedTypes(true);
-            }
-            if(shared.getDList().size() < shared.getCount()) {
-                shared.setContainsNonDate(true);
-            }
-            /*if(shared.getContainsNumber()){
-                Iterator<CTNumber> it = shared.getNList().iterator();
-                Double max = Double.MIN_VALUE;
-                Double value;
-                while(it.hasNext()) {
-                    value = it.next().getV();
-                    if(value > max) {
-                        max = value;
-                    } 
-                }
-                shared.setMaxValue(max);
-                it = shared.getNList().iterator();
-                Double min = Double.MAX_VALUE;
-                while(it.hasNext()) {
-                    value = it.next().getV();
-                    if(value < min) {
-                        min = value;
-                    } 
-                }
-                shared.setMinValue(min);
-            }  */
-        }
-       
+        
+        CTCacheFields cFields = cacheDef.addNewCacheFields();
+        //Create cachefield/s and empty SharedItems
+        pivotTable.getPivotCacheDefinition().createCacheFields(sheet);
+                
         //Set dynamically when knowing how many fields to display
         CTPivotFields fields = definition.addNewPivotFields();
-        fields.setCount(2);
+        //fields.setCount(2);
         CTPivotField field = fields.addNewPivotField();
         field.setShowAll(true);
         field.setAxis(STAxis.AXIS_ROW);
@@ -203,12 +106,12 @@ public class CreatePivotTable {
         items.addNewItem().setT(STItemType.DEFAULT);
         items.addNewItem().setT(STItemType.DEFAULT);
         items.addNewItem().setT(STItemType.DEFAULT);
-        items.setCount(3);
+        //items.setCount(3);
 
         //Set rowfields
         CTRowFields rowFields = definition.addNewRowFields();
         rowFields.addNewField().setX(0);
-        rowFields.setCount(1);
+        //rowFields.setCount(1);
         
         //Add rowItems
         CTRowItems rowItems = definition.addNewRowItems();
@@ -217,21 +120,21 @@ public class CreatePivotTable {
         CTI rowItem = rowItems.addNewI();
         rowItem.setT(STItemType.GRAND);
         rowItem.addNewX();
-        rowItems.setCount(3);
+        //rowItems.setCount(3);
         
         //Set colItems
         CTColItems colItems = definition.addNewColItems();
         colItems.addNewI();
-        colItems.setCount(1);
+        //colItems.setCount(1);
                 
         //Set datafields, hard coded
         CTDataFields dataFields = definition.addNewDataFields();
-        dataFields.setCount(1);
+        //dataFields.setCount(1);
         CTDataField dataField = dataFields.addNewDataField();
         dataField.setName("Sum of #");
         //Index of the field to bee summarized
         dataField.setFld(1);
-        
+               
         FileOutputStream fileOut = new FileOutputStream(fileName);
         wb.write(fileOut);
         fileOut.close();
@@ -255,6 +158,6 @@ public class CreatePivotTable {
         Cell cell5 = row3.createCell((short) 0);
         cell5.setCellValue("Sofia");
         Cell cell6 = row3.createCell((short) 1);
-        cell6.setCellValue(3);
+        cell6.setCellValue(2);
     }
 }
