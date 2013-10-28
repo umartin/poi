@@ -26,7 +26,9 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataField;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataFields;
@@ -35,6 +37,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageField;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheRecords;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotField;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
@@ -42,9 +45,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinitio
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRecord;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRowFields;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheetSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STAxis;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STItemType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSourceType;
 
 /**
  *
@@ -358,6 +363,26 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         CTPageField pageField = pageFields.addNewPageField();
         pageField.setHier(-1);
         pageField.setFld(index);
+    }
+    
+    /**
+     * Creates cacheSource and workSheetSource for pivot table and sets the source reference as well assets the location of the pivot table
+     * @param source Source for data for pivot table
+     * @param position Position for pivot table in sheet
+     * @param sourceSheet Sheet where the source will be collected from
+     */
+    protected void createSourceReferences(AreaReference source, CellReference position, XSSFSheet sourceSheet){
+        //Get cell one to the right and one down from position, add both to AreaReference and set pivot table location.
+        AreaReference destination = new AreaReference(position, new CellReference(position.getRow()+1, position.getCol()+1));
+        setLocation(destination.formatAsString(), 1, 1, 1);
+
+        //Set source for the pivot table
+        CTPivotCacheDefinition cacheDef = getPivotCacheDefinition().getCTPivotCacheDefinition();
+        CTCacheSource cacheSource = cacheDef.addNewCacheSource();
+        cacheSource.setType(STSourceType.WORKSHEET);
+        CTWorksheetSource worksheetSource = cacheSource.addNewWorksheetSource();
+        worksheetSource.setSheet(sourceSheet.getSheetName());
+        worksheetSource.setRef(source.formatAsString());
     }
     
     protected void createDefaultDataColumns() {

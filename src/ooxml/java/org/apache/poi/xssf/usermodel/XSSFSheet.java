@@ -3425,17 +3425,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     public XSSFPivotTable createPivotTable(AreaReference source, CellReference position, XSSFSheet sourceSheet){
         XSSFPivotTable pivotTable = createPivotTable();
-   
-        //Get cell one to the right and one down from position, add both to AreaReference and set pivot table location.
-        AreaReference destination = new AreaReference(position, new CellReference(position.getRow()+1, position.getCol()+1));
-        pivotTable.setLocation(destination.formatAsString(), 1, 1, 1);
 
-        CTPivotCacheDefinition cacheDef = pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition();
-        CTCacheSource cacheSource = cacheDef.addNewCacheSource();
-        cacheSource.setType(STSourceType.WORKSHEET);
-        CTWorksheetSource worksheetSource = cacheSource.addNewWorksheetSource();
-        worksheetSource.setSheet(sourceSheet.getSheetName());
-        worksheetSource.setRef(source.formatAsString());
+        //Set sources and references
+        pivotTable.createSourceReferences(source, position, sourceSheet);
         
         //Create cache records
         pivotTable.createCacheRecords();               
