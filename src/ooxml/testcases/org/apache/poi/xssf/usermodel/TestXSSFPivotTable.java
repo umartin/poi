@@ -17,12 +17,14 @@
 package org.apache.poi.xssf.usermodel;
 
 import junit.framework.*;
+import static junit.framework.TestCase.fail;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.junit.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 
 public class TestXSSFPivotTable extends TestCase {
@@ -63,6 +65,24 @@ public class TestXSSFPivotTable extends TestCase {
             return;
         }
         fail();
+    }
+    
+     /**
+     * Verify when creating a data column set to a data field, the data field with the corresponding
+     * column index will be set to true.
+     */
+    public void testAddDataColumn() {
+        Workbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) wb.createSheet();          
+        setCellData(sheet);
+        AreaReference source = new AreaReference("A1:B2");
+        XSSFPivotTable pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
+        int columnIndex = 0;
+        boolean isDataField = true;
+        
+        pivotTable.addDataColumn(columnIndex, isDataField);
+        CTPivotFields pivotFields = pivotTable.getCTPivotTableDefinition().getPivotFields();
+        assertEquals(pivotFields.getPivotFieldArray(columnIndex).getDataField(), isDataField);
     }
     
         public static void setCellData(XSSFSheet sheet){
