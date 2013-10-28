@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import junit.framework.*;
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.fail;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -85,7 +86,27 @@ public class TestXSSFPivotTable extends TestCase {
         assertEquals(pivotFields.getPivotFieldArray(columnIndex).getDataField(), isDataField);
     }
     
-        public static void setCellData(XSSFSheet sheet){
+    /**
+     * Verify that it's not possible to create a data column outside of the referenced area.
+     */
+    public void testAddDataColumnOutOfRangeThrowsException() {
+        Workbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) wb.createSheet();          
+        setCellData(sheet);
+        AreaReference source = new AreaReference("A1:B2");
+        XSSFPivotTable pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
+        int columnIndex = 5;
+        boolean isDataField = true;
+        
+        try {
+            pivotTable.addDataColumn(columnIndex, isDataField);
+        } catch(IndexOutOfBoundsException e) {
+            return;
+        }
+        fail();
+    }
+    
+    public static void setCellData(XSSFSheet sheet){
         Row row1 = sheet.createRow((short) 0);
         // Create a cell and put a value in it.
         Cell cell = row1.createCell((short) 0);
