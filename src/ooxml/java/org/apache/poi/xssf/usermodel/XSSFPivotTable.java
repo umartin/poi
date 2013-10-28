@@ -32,6 +32,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataField;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTItems;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageField;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheRecords;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotField;
@@ -112,21 +114,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         this.pivotCacheRecords = pivotCacheRecords;
     }
     
-    /**
-     * Set the area of where the values will be gathered.
-     * Index starts at 0.
-     * @param startColumn, the first column in the area.
-     * @param startRow, the first row in the area.
-     * @param endColumn, the last column in the area.
-     * @param endRow, the last row in the area.
-     */
-    public void setReferences(int startColumn, int startRow, int endColumn, int endRow) {
-        this.referenceStartColumn = startColumn;
-        this.referenceStartRow = startRow;
-        this.referenceEndColumn = endColumn;
-        this.referenceEndRow = endRow;
-    }
-    
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
@@ -143,11 +130,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * Set default values for the table definition.
      */
     public void setDefaultPivotTableDefinition() {
-        //Not included
-        //multipleFieldFilter (set when adding filter)
-        //outlineData (set when grouping data)
-        //outline -II-
-        
+        //Not more than one until more created
+        pivotTableDefinition.setMultipleFieldFilters(false);
         //Indentation increment for compact rows
         pivotTableDefinition.setIndent(0);
         //The pivot version which created the pivot cache set to default value
@@ -232,9 +216,9 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
                     case (Cell.CELL_TYPE_BLANK):
                         record.addNewM();
                         break;
-                    /*case (Cell.CELL_TYPE_ERROR):
-                        r.addNewE().setV(String.valueOf(c.getErrorCellValue()));
-                        break;*/
+                    case (Cell.CELL_TYPE_ERROR):
+                        record.addNewE().setV(String.valueOf(cell.getErrorCellValue()));
+                        break;
                     case (Cell.CELL_TYPE_FORMULA):
                         record.addNewS().setV(cell.getCellFormula());
                         break;
@@ -351,7 +335,42 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotFields.setPivotFieldArray(pivotFieldList.toArray(new CTPivotField[pivotFieldList.size()]));
     }
     
-    public void addReportFilter() {
+    /**
+     * Add filter for the column with the corresponding index 
+     * @param index, of the column to filter on
+     */
+    public void addReportFilter(int index) {
+        CTPivotFields pivotFields;
+        if (pivotTableDefinition.getPivotFields() != null) {
+            pivotFields = pivotTableDefinition.getPivotFields();            
+        } else {
+            pivotFields = pivotTableDefinition.addNewPivotFields();
+        }
+        AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
+        int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
+    
+        List<CTPivotField> pivotFieldList = pivotTableDefinition.getPivotFields().getPivotFieldList();
+        CTPivotField pivotField = CTPivotField.Factory.newInstance();
+        CTItems items = pivotField.addNewItems();
+
+        pivotField.setAxis(STAxis.AXIS_PAGE);
+        for(int i = 0; i < lastRowIndex; i++) {
+            items.addNewItem().setT(STItemType.DEFAULT);
+        }
+        items.setCount(items.getItemList().size());
+        pivotFieldList.add(index, pivotField);
         
+        CTPageFields pageFields;
+        if (pivotTableDefinition.getPageFields()!= null) {
+            pageFields = pivotTableDefinition.getPageFields();  
+            //Another filter has already been created
+            pivotTableDefinition.setMultipleFieldFilters(true);
+        } else {
+            pageFields = pivotTableDefinition.addNewPageFields();
+        }
+        
+        CTPageField pageField = pageFields.addNewPageField();
+        pageField.setHier(-1);
+        pageField.setFld(index);
     }
 }
