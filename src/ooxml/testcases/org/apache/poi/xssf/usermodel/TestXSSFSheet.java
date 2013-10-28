@@ -1209,4 +1209,6 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertNotNull(sh);
         assertEquals(ROW_COUNT-1, sh.getLastRowNum());
     }
+    
+    
 }

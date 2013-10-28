@@ -16,18 +16,23 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import junit.framework.TestCase;
-import static junit.framework.TestCase.assertEquals;
+import junit.framework.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 
 public class TestXSSFPivotTable extends TestCase {
     
-    public void testAddRowLabel() {
+    /*
+     * Verify that when creating a row label it's  created on the correct row
+     * and the count is increased by one.
+     */
+    @Test
+    public void testAddRowLabelToPivotTable() {
         Workbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) wb.createSheet();          
         setCellData(sheet);
@@ -38,11 +43,26 @@ public class TestXSSFPivotTable extends TestCase {
         pivotTable.addRowLabel(columnIndex);
         CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
         
-        assertEquals(defintion.getPivotFields().getPivotFieldArray(columnIndex).getItems().getCount(), 
-                source.getLastCell().getRow());
-        
         assertEquals(defintion.getRowFields().getFieldArray(0).getX(), columnIndex);
         assertEquals(defintion.getRowFields().getCount(), 1);
+    }
+    /**
+     * Verify that it's not possible to create a row label outside of the referenced area.
+     */
+    public void testAddRowOutOfRangeThrowsException() {
+        Workbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) wb.createSheet();          
+        setCellData(sheet);
+        AreaReference source = new AreaReference("A1:B2");
+        XSSFPivotTable pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
+        int columnIndex = 5;
+                
+        try {
+            pivotTable.addRowLabel(columnIndex);    
+        } catch(IndexOutOfBoundsException e) {
+            return;
+        }
+        fail();
     }
     
         public static void setCellData(XSSFSheet sheet){
