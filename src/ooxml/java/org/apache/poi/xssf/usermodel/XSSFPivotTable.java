@@ -190,8 +190,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         String source = pivotCacheDefinition.getCTPivotCacheDefinition().
                 getCacheSource().getWorksheetSource().getRef();
         AreaReference sourceArea = new AreaReference(source);
-        
-        records.setCount(sourceArea.getLastCell().getRow()-sourceArea.getFirstCell().getRow());
+
         CTRecord record;
         Cell cell;
         Row row;
@@ -226,6 +225,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
                 }
             }
         }   
+                
+        records.setCount(records.getRList().size());
     }
     
     /**
