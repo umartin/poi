@@ -149,7 +149,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         //multipleFieldFilter (set when adding filter)
         //outlineData (set when grouping data)
         //outline -II-
-        
+        //
+        pivotTableDefinition.setMultipleFieldFilters(false);
         //Indentation increment for compact rows
         pivotTableDefinition.setIndent(0);
         //The pivot version which created the pivot cache set to default value
@@ -380,7 +381,9 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         
         CTPageFields pageFields;
         if (pivotTableDefinition.getPageFields()!= null) {
-            pageFields = pivotTableDefinition.getPageFields();            
+            pageFields = pivotTableDefinition.getPageFields();  
+            //Another filter has already been created
+            pivotTableDefinition.setMultipleFieldFilters(true);
         } else {
             pageFields = pivotTableDefinition.addNewPageFields();
         }
