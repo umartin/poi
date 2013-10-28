@@ -25,10 +25,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheDefinition;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheetSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSourceType;
@@ -46,17 +44,11 @@ public class CreatePivotTable {
     public static void createPivot(String fileName)throws FileNotFoundException, IOException{
         Workbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) wb.createSheet();
-        XSSFPivotTable pivotTable = sheet.createPivotTable();
+        XSSFSheet sheet1 = (XSSFSheet) wb.createSheet();
+        XSSFPivotTable pivotTable = sheet1.createPivotTable();
 
         setCellData(sheet);
-                
-        CTPivotTableDefinition definition = pivotTable.getCTPivotTableDefinition();
-        //Set later
-        definition.setMultipleFieldFilters(false);
-        //Look up definition
-        definition.setOutline(true);
-        definition.setOutlineData(true);
-        
+
         pivotTable.setLocation("H5:I6", 1, 1, 1);
         //Cache definition
         CTPivotCacheDefinition cacheDef = pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition();
@@ -66,18 +58,10 @@ public class CreatePivotTable {
         worksheetSource.setSheet(sheet.getSheetName());
         worksheetSource.setRef("A1:C3");
         
-        int rowStart = 0;
-        int rowEnd = 2;
-        
-        int columnStart = 0;
-        int columnEnd = 2;
-        
-        pivotTable.setReferences(columnStart, rowStart, columnEnd, rowEnd);
         pivotTable.createCacheRecords();
    
         cacheDef.setRecordCount(pivotTable.getPivotCacheRecords().getCtPivotCacheRecords().getCount());
         
-        CTCacheFields cFields = cacheDef.addNewCacheFields();
         //Create cachefield/s and empty SharedItems
         pivotTable.getPivotCacheDefinition().createCacheFields(sheet);
                        
