@@ -60,7 +60,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     private XSSFPivotCacheDefinition pivotCacheDefinition;
     private XSSFPivotCacheRecords pivotCacheRecords;
     private XSSFSheet parentSheet;
-    private AreaReference sourceArea;
 
     public XSSFPivotTable() {
         super();
@@ -108,14 +107,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     public void setPivotCacheRecords(XSSFPivotCacheRecords pivotCacheRecords) {
         this.pivotCacheRecords = pivotCacheRecords;
-    }
-    
-    public void setSourceArea(AreaReference area) {
-        this.sourceArea = area;
-    }
-    
-    public AreaReference getSourceArea() {
-        return sourceArea;
     }
     
     @Override
@@ -196,6 +187,10 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      */
     public void createCacheRecords() {
         CTPivotCacheRecords records =  pivotCacheRecords.getCtPivotCacheRecords();
+        String source = pivotCacheDefinition.getCTPivotCacheDefinition().
+                getCacheSource().getWorksheetSource().getRef();
+        AreaReference sourceArea = new AreaReference(source);
+        
         records.setCount(sourceArea.getLastCell().getRow()-sourceArea.getFirstCell().getRow());
         CTRecord record;
         Cell cell;

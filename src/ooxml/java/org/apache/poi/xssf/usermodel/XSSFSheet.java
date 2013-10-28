@@ -3418,8 +3418,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     
     public XSSFPivotTable createPivotTable(AreaReference source, CellReference position){
         XSSFPivotTable pivotTable = createPivotTable();
-        //Set source reference
-        pivotTable.setSourceArea(source);
         //get cell next to cr, add it and cr to AreaReference and give AreaReference to pivotTable.
         pivotTable.setLocation("F5:G6", 1, 1, 1);
         //Cache definition
@@ -3429,6 +3427,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         CTWorksheetSource worksheetSource = cacheSource.addNewWorksheetSource();
         worksheetSource.setSheet(this.getSheetName());
         worksheetSource.setRef(source.formatAsString());
+        
+        //Create cache records
+        pivotTable.createCacheRecords();               
+        //Create cachefield/s and empty SharedItems
+        pivotTable.getPivotCacheDefinition().createCacheFields(this);
         
         return pivotTable;
     }
