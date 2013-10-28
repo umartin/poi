@@ -167,7 +167,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     /**
      * Creates all pivotCacheRecords in the referenced area.
      */
-    public void createCacheRecords() {
+    protected void createCacheRecords() {
         CTPivotCacheRecords records =  pivotCacheRecords.getCtPivotCacheRecords();
         String source = pivotCacheDefinition.getCTPivotCacheDefinition().
                 getCacheSource().getWorksheetSource().getRef();
