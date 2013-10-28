@@ -129,7 +129,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     /**
      * Set default values for the table definition.
      */
-    public void setDefaultPivotTableDefinition() {
+    protected void setDefaultPivotTableDefinition() {
         //Not more than one until more created
         pivotTableDefinition.setMultipleFieldFilters(false);
         //Indentation increment for compact rows
