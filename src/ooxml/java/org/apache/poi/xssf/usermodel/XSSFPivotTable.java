@@ -163,29 +163,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         style.setShowColHeaders(true);
         style.setShowRowHeaders(true);
     }
-   
-   /**
-    * Set location of where the pivotTable will be placed.
-    * @param ref, coordinates in worksheet, eg. A1:D4
-    * @param firstDataCol, set which column is the first containing data (index of pivot table)
-    * @param firstRowCol, set which row is the first containing data (index of pivot table)
-    * @param firstHeaderRow, set which row is the first header row (index of pivot table)
-    * @return the location of the table
-    */
-    public CTLocation setLocation(String ref, int firstDataCol, int firstDataRow, int firstHeaderRow) {
-        CTLocation location;
-        if(pivotTableDefinition.getLocation() == null) {
-            location = pivotTableDefinition.addNewLocation();
-            location.setFirstDataCol(firstDataCol);
-            location.setFirstDataRow(firstDataRow);
-            location.setFirstHeaderRow(firstHeaderRow);
-        } else {
-            location = pivotTableDefinition.getLocation();
-        }
-        location.setRef(ref);
-        pivotTableDefinition.setLocation(location); 
-        return location;
-    }
     
     /**
      * Creates all pivotCacheRecords in the referenced area.
@@ -374,7 +351,18 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     protected void createSourceReferences(AreaReference source, CellReference position, XSSFSheet sourceSheet){
         //Get cell one to the right and one down from position, add both to AreaReference and set pivot table location.
         AreaReference destination = new AreaReference(position, new CellReference(position.getRow()+1, position.getCol()+1));
-        setLocation(destination.formatAsString(), 1, 1, 1);
+        
+        CTLocation location;
+        if(pivotTableDefinition.getLocation() == null) {
+            location = pivotTableDefinition.addNewLocation();
+            location.setFirstDataCol(1);
+            location.setFirstDataRow(1);
+            location.setFirstHeaderRow(1);
+        } else {
+            location = pivotTableDefinition.getLocation();
+        }
+        location.setRef(destination.formatAsString());
+        pivotTableDefinition.setLocation(location); 
 
         //Set source for the pivot table
         CTPivotCacheDefinition cacheDef = getPivotCacheDefinition().getCTPivotCacheDefinition();
