@@ -233,12 +233,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * @param columnIndex, the index of the column to be used as row label.
      */
     public void addRowLabel(int columnIndex) {
-        CTPivotFields pivotFields;
-        if (pivotTableDefinition.getPivotFields() != null) {
-            pivotFields = pivotTableDefinition.getPivotFields();            
-        } else {
-            pivotFields = pivotTableDefinition.addNewPivotFields();
-        }
+        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();            
+
         AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
         int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
     
@@ -319,18 +315,12 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * @param isDataField, true if the data should be displayed in the pivot table.
      */
     public void addDataColumn(int columnIndex, boolean isDataField) {
-        CTPivotFields pivotFields;
-        if (pivotTableDefinition.getPivotFields() != null) {
-            pivotFields = pivotTableDefinition.getPivotFields();            
-        } else {
-            pivotFields = pivotTableDefinition.addNewPivotFields();
-            pivotTableDefinition.getLocation().setFirstDataCol(columnIndex);
-        }
+        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();            
         List<CTPivotField> pivotFieldList = pivotFields.getPivotFieldList();
         CTPivotField pivotField = CTPivotField.Factory.newInstance();
         
         pivotField.setDataField(isDataField);         
-        pivotFieldList.add(columnIndex, pivotField);
+        pivotFieldList.set(columnIndex, pivotField);
         pivotFields.setCount(pivotFieldList.size());
         pivotFields.setPivotFieldArray(pivotFieldList.toArray(new CTPivotField[pivotFieldList.size()]));
     }
@@ -340,12 +330,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * @param index, of the column to filter on
      */
     public void addReportFilter(int index) {
-        CTPivotFields pivotFields;
-        if (pivotTableDefinition.getPivotFields() != null) {
-            pivotFields = pivotTableDefinition.getPivotFields();            
-        } else {
-            pivotFields = pivotTableDefinition.addNewPivotFields();
-        }
+        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
         AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
         int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
     
@@ -358,7 +343,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
             items.addNewItem().setT(STItemType.DEFAULT);
         }
         items.setCount(items.getItemList().size());
-        pivotFieldList.add(index, pivotField);
+        pivotFieldList.set(index, pivotField);
         
         CTPageFields pageFields;
         if (pivotTableDefinition.getPageFields()!= null) {
@@ -372,5 +357,22 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         CTPageField pageField = pageFields.addNewPageField();
         pageField.setHier(-1);
         pageField.setFld(index);
+    }
+    
+    protected void createDefaultDataColumns() {
+        CTPivotFields pivotFields;
+        if (pivotTableDefinition.getPivotFields() != null) {
+            pivotFields = pivotTableDefinition.getPivotFields();            
+        } else {
+            pivotFields = pivotTableDefinition.addNewPivotFields();
+        }
+        String source = pivotCacheDefinition.getCTPivotCacheDefinition().
+                getCacheSource().getWorksheetSource().getRef();
+        AreaReference sourceArea = new AreaReference(source);
+        int firstColumn = sourceArea.getFirstCell().getCol();
+        int lastColumn = sourceArea.getLastCell().getCol();
+        for(int i = 0; i<lastColumn-firstColumn; i++) {
+            pivotFields.addNewPivotField().setDataField(false);
+        }
     }
 }
