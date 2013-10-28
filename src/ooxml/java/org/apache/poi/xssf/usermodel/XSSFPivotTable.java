@@ -206,8 +206,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
                         break;
                 }
             }
-        }   
-                
+        }                  
         records.setCount(records.getRList().size());
     }
     
@@ -233,7 +232,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotFieldList.set(columnIndex, pivotField);
         
         pivotFields.setPivotFieldArray(pivotFieldList.toArray(new CTPivotField[pivotFieldList.size()]));
-        pivotFields.setCount(pivotFieldList.size());
         
         CTRowFields rowFields;
         if(pivotTableDefinition.getRowFields() != null) {
@@ -304,7 +302,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         
         pivotField.setDataField(isDataField);         
         pivotFieldList.set(columnIndex, pivotField);
-        pivotFields.setCount(pivotFieldList.size());
         pivotFields.setPivotFieldArray(pivotFieldList.toArray(new CTPivotField[pivotFieldList.size()]));
     }
     
@@ -388,5 +385,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         for(int i = 0; i<=lastColumn-firstColumn; i++) {
             pivotFields.addNewPivotField().setDataField(false);
         }
+        pivotFields.setCount(pivotFields.getPivotFieldList().size());
     }
 }
