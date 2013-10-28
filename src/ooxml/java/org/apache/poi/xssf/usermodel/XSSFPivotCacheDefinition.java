@@ -30,7 +30,6 @@ import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheField;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheDefinition;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSharedItems;
 
 public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
     
@@ -79,8 +78,12 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
         int columnStart = firstCell.getCol();
         int columnEnd = lastCell.getCol();
         Row row = sheet.getRow(firstCell.getRow());
-           
-        CTCacheFields cFields = ctPivotCacheDefinition.getCacheFields();
+        CTCacheFields cFields;
+        if(ctPivotCacheDefinition.getCacheFields() != null) {
+            cFields = ctPivotCacheDefinition.getCacheFields();    
+        } else {
+            cFields = ctPivotCacheDefinition.addNewCacheFields();
+        }
         //For each column, create a cache field and give it en empty sharedItems
         for(int i=columnStart; i<=columnEnd; i++) {
             CTCacheField cf = cFields.addNewCacheField();
