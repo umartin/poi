@@ -60,10 +60,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     private XSSFPivotCacheDefinition pivotCacheDefinition;
     private XSSFPivotCacheRecords pivotCacheRecords;
     private XSSFSheet parentSheet;
-    private int referenceStartRow;
-    private int referenceEndRow;
-    private int referenceStartColumn;
-    private int referenceEndColumn;
+    private AreaReference sourceArea;
 
     public XSSFPivotTable() {
         super();
@@ -71,7 +68,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotCache = CTPivotCache.Factory.newInstance();
         pivotCacheDefinition = new XSSFPivotCacheDefinition();
         pivotCacheRecords = new XSSFPivotCacheRecords();
-        //setDefaultPivotTableDefinition();
     }
 
     public void setCache(CTPivotCache pivotCache) {
@@ -112,6 +108,14 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     public void setPivotCacheRecords(XSSFPivotCacheRecords pivotCacheRecords) {
         this.pivotCacheRecords = pivotCacheRecords;
+    }
+    
+    public void setSourceArea(AreaReference area) {
+        this.sourceArea = area;
+    }
+    
+    public AreaReference getSourceArea() {
+        return sourceArea;
     }
     
     @Override
@@ -192,15 +196,15 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      */
     public void createCacheRecords() {
         CTPivotCacheRecords records =  pivotCacheRecords.getCtPivotCacheRecords();
-        records.setCount(referenceEndRow-referenceStartRow);
+        records.setCount(sourceArea.getLastCell().getRow()-sourceArea.getFirstCell().getRow());
         CTRecord record;
         Cell cell;
         Row row;
         //Goes through all cells, except the header, in the referenced area.
-        for(int i = referenceStartRow+1; i <= referenceEndRow; i++) {
+        for(int i = sourceArea.getFirstCell().getRow()+1; i <= sourceArea.getLastCell().getRow(); i++) {
             row = parentSheet.getRow(i);
             record = records.addNewR();
-            for(int j = referenceStartColumn; j <= referenceEndColumn; j++) {
+            for(int j = sourceArea.getFirstCell().getCol(); j <= sourceArea.getLastCell().getCol(); j++) {
                 cell = row.getCell(j);
                 //Creates a record based on the content of the cell.
                 switch (cell.getCellType()) {
