@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
+import static junit.framework.TestCase.assertEquals;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -41,6 +42,7 @@ public class TestXSSFPivotTable extends TestCase {
                 source.getLastCell().getRow());
         
         assertEquals(defintion.getRowFields().getFieldArray(0).getX(), columnIndex);
+        assertEquals(defintion.getRowFields().getCount(), 1);
     }
     
         public static void setCellData(XSSFSheet sheet){
