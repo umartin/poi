@@ -329,6 +329,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
             pivotFields = pivotTableDefinition.getPivotFields();            
         } else {
             pivotFields = pivotTableDefinition.addNewPivotFields();
+            pivotTableDefinition.getLocation().setFirstDataCol(columnIndex);
         }
         List<CTPivotField> pivotFieldList = pivotFields.getPivotFieldList();
         CTPivotField pivotField = CTPivotField.Factory.newInstance();
