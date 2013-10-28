@@ -70,7 +70,7 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
      * Generates a cache field for each column in the reference area for the pivot table. 
      * @param sheet The sheet where the data i collected from
      */
-    public void createCacheFields(XSSFSheet sheet){
+    protected void createCacheFields(XSSFSheet sheet){
         //Get values for start row, start and end column
         AreaReference ar = new AreaReference(ctPivotCacheDefinition.getCacheSource().getWorksheetSource().getRef());
         CellReference firstCell = ar.getFirstCell();
