@@ -32,11 +32,14 @@ public class TestXSSFPivotTable extends TestCase {
         setCellData(sheet);
         AreaReference source = new AreaReference("A1:B2");
         XSSFPivotTable pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
+        int columnIndex = 0;
         
-        pivotTable.addRowLabel(0);
+        pivotTable.addRowLabel(columnIndex);
         CTPivotFields fields = pivotTable.getCTPivotTableDefinition().getPivotFields();
-        assertNotNull(fields);      
+        assertNotNull(fields);    
         
+        assertEquals(fields.getPivotFieldArray(columnIndex).getItems().getCount(), 
+                source.getLastCell().getRow());
     }
     
         public static void setCellData(XSSFSheet sheet){
