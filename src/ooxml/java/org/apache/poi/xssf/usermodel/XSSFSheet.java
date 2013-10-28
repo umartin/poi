@@ -3416,19 +3416,38 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return pivotTable;
     }
     
-    public XSSFPivotTable createPivotTable(AreaReference source, CellReference position){
+    /**
+     * Create a pivot table and set area of source, source sheet and a position for pivot table
+     * @param source Area from where data will be collected
+     * @param position A reference to the cell where the table will start
+     * @param sourceSheet The sheet where source will be collected from
+     * @return The pivot table
+     */
+    public XSSFPivotTable createPivotTable(AreaReference source, CellReference position, XSSFSheet sourceSheet){
         XSSFPivotTable pivotTable = createPivotTable();
         
-        //get cell next to cr, add it and cr to AreaReference and give AreaReference to pivotTable.
-        pivotTable.setLocation("F5:G6", 1, 1, 1);
-        //Cache definition
+        //Get cell one to the right and one down from position, add both to AreaReference and set pivot table location.
+        AreaReference destination = new AreaReference(position, new CellReference(position.getRow()+1, position.getCol()+1));
+        pivotTable.setLocation(destination.formatAsString(), 1, 1, 1);
+        
+        //Set source for the pivot table
         CTPivotCacheDefinition cacheDef = pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition();
         CTCacheSource cacheSource = cacheDef.addNewCacheSource();
         cacheSource.setType(STSourceType.WORKSHEET);
         CTWorksheetSource worksheetSource = cacheSource.addNewWorksheetSource();
-        worksheetSource.setSheet(this.getSheetName());
+        worksheetSource.setSheet(sourceSheet.getSheetName());
         worksheetSource.setRef(source.formatAsString());
         
         return pivotTable;
+    }
+    
+    /**
+     * Create a pivot table and set area of source and a position for pivot table
+     * @param source Area from where data will be collected
+     * @param position A reference to the cell where the table will start
+     * @return The pivot table
+     */
+    public XSSFPivotTable createPivotTable(AreaReference source, CellReference position){
+        return createPivotTable(source, position, this);
     }
 }
