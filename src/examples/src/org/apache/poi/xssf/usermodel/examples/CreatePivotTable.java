@@ -42,14 +42,15 @@ public class CreatePivotTable {
     public static void createPivot(String fileName)throws FileNotFoundException, IOException{
         Workbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) wb.createSheet();
-
+        
+        //Create some data to build the pivot table on
         setCellData(sheet);
+        
         XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:C3"), new CellReference("H5"));
-                       
+        //Configure the pivot table
         pivotTable.addRowLabel(0);
-        //pivotTable.addColumnLabel(STDataConsolidateFunction.AVERAGE,1);
-        pivotTable.addColumnLabel(STDataConsolidateFunction.SUM, 2);
         pivotTable.addRowLabel(1);
+        pivotTable.addColumnLabel(STDataConsolidateFunction.SUM,2);
         
         FileOutputStream fileOut = new FileOutputStream(fileName);
         wb.write(fileOut);
@@ -80,7 +81,6 @@ public class CreatePivotTable {
         Cell cell6 = row3.createCell((short) 1);
         cell6.setCellValue(3);
         Cell cell9 = row3.createCell((short) 2);
-        cell9.setCellValue(82);
-        
+        cell9.setCellValue(82);  
     }
 }
