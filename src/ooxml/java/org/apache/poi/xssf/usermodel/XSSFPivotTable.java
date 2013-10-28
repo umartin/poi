@@ -114,21 +114,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         this.pivotCacheRecords = pivotCacheRecords;
     }
     
-    /**
-     * Set the area of where the values will be gathered.
-     * Index starts at 0.
-     * @param startColumn, the first column in the area.
-     * @param startRow, the first row in the area.
-     * @param endColumn, the last column in the area.
-     * @param endRow, the last row in the area.
-     */
-    public void setReferences(int startColumn, int startRow, int endColumn, int endRow) {
-        this.referenceStartColumn = startColumn;
-        this.referenceStartRow = startRow;
-        this.referenceEndColumn = endColumn;
-        this.referenceEndRow = endRow;
-    }
-    
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
@@ -145,11 +130,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * Set default values for the table definition.
      */
     public void setDefaultPivotTableDefinition() {
-        //Not included
-        //multipleFieldFilter (set when adding filter)
-        //outlineData (set when grouping data)
-        //outline -II-
-        //
+        //Not more than one until more created
         pivotTableDefinition.setMultipleFieldFilters(false);
         //Indentation increment for compact rows
         pivotTableDefinition.setIndent(0);
@@ -235,9 +216,9 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
                     case (Cell.CELL_TYPE_BLANK):
                         record.addNewM();
                         break;
-                    /*case (Cell.CELL_TYPE_ERROR):
-                        r.addNewE().setV(String.valueOf(c.getErrorCellValue()));
-                        break;*/
+                    case (Cell.CELL_TYPE_ERROR):
+                        record.addNewE().setV(String.valueOf(cell.getErrorCellValue()));
+                        break;
                     case (Cell.CELL_TYPE_FORMULA):
                         record.addNewS().setV(cell.getCellFormula());
                         break;
