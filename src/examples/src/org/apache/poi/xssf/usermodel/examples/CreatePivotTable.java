@@ -22,6 +22,7 @@ import java.io.IOException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -46,9 +47,8 @@ public class CreatePivotTable {
     public static void createPivot(String fileName)throws FileNotFoundException, IOException{
         Workbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) wb.createSheet();
-        XSSFPivotTable pivotTable = sheet.createPivotTable();
-
         setCellData(sheet);
+        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:C3"), "H5");
                 
         CTPivotTableDefinition definition = pivotTable.getCTPivotTableDefinition();
         //Set later
@@ -56,15 +56,6 @@ public class CreatePivotTable {
         //Look up definition
         definition.setOutline(true);
         definition.setOutlineData(true);
-        
-        pivotTable.setLocation("H5:I6", 1, 1, 1);
-        //Cache definition
-        CTPivotCacheDefinition cacheDef = pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition();
-        CTCacheSource source = cacheDef.addNewCacheSource();
-        source.setType(STSourceType.WORKSHEET);
-        CTWorksheetSource worksheetSource = source.addNewWorksheetSource();
-        worksheetSource.setSheet(sheet.getSheetName());
-        worksheetSource.setRef("A1:C3");
         
         int rowStart = 0;
         int rowEnd = 2;
@@ -75,6 +66,7 @@ public class CreatePivotTable {
         pivotTable.setReferences(columnStart, rowStart, columnEnd, rowEnd);
         pivotTable.createCacheRecords();
    
+        CTPivotCacheDefinition cacheDef = pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition();
         cacheDef.setRecordCount(pivotTable.getPivotCacheRecords().getCtPivotCacheRecords().getCount());
         
         CTCacheFields cFields = cacheDef.addNewCacheFields();
@@ -116,5 +108,11 @@ public class CreatePivotTable {
         cell6.setCellValue(3);
         Cell cell9 = row3.createCell((short) 2);
         cell9.setCellValue(82);
+        
+        //Under pivottable
+        Row row6 = sheet.createRow((short) 5);
+        Cell cell10 = row6.createCell((short) 5);
+        cell10.setCellValue("Hej");
+        
     }
 }
