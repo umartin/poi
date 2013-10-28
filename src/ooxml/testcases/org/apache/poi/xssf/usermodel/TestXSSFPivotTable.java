@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import junit.framework.*;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.fail;
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,89 +23,19 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.junit.Before;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 
-public class TestXSSFPivotTable extends TestCase {
+public class TestXSSFPivotTable {
     
-    /*
-     * Verify that when creating a row label it's  created on the correct row
-     * and the count is increased by one.
-     */
-    @Test
-    public void testAddRowLabelToPivotTable() {
+    XSSFPivotTable pivotTable;
+    @Before
+    public void setup(){
         Workbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) wb.createSheet();          
-        setCellData(sheet);
-        AreaReference source = new AreaReference("A1:B2");
-        XSSFPivotTable pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
-        int columnIndex = 0;
+        XSSFSheet sheet = (XSSFSheet) wb.createSheet(); 
         
-        pivotTable.addRowLabel(columnIndex);
-        CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
-        
-        assertEquals(defintion.getRowFields().getFieldArray(0).getX(), columnIndex);
-        assertEquals(defintion.getRowFields().getCount(), 1);
-    }
-    /**
-     * Verify that it's not possible to create a row label outside of the referenced area.
-     */
-    public void testAddRowOutOfRangeThrowsException() {
-        Workbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) wb.createSheet();          
-        setCellData(sheet);
-        AreaReference source = new AreaReference("A1:B2");
-        XSSFPivotTable pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
-        int columnIndex = 5;
-                
-        try {
-            pivotTable.addRowLabel(columnIndex);    
-        } catch(IndexOutOfBoundsException e) {
-            return;
-        }
-        fail();
-    }
-    
-     /**
-     * Verify when creating a data column set to a data field, the data field with the corresponding
-     * column index will be set to true.
-     */
-    public void testAddDataColumn() {
-        Workbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) wb.createSheet();          
-        setCellData(sheet);
-        AreaReference source = new AreaReference("A1:B2");
-        XSSFPivotTable pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
-        int columnIndex = 0;
-        boolean isDataField = true;
-        
-        pivotTable.addDataColumn(columnIndex, isDataField);
-        CTPivotFields pivotFields = pivotTable.getCTPivotTableDefinition().getPivotFields();
-        assertEquals(pivotFields.getPivotFieldArray(columnIndex).getDataField(), isDataField);
-    }
-    
-    /**
-     * Verify that it's not possible to create a data column outside of the referenced area.
-     */
-    public void testAddDataColumnOutOfRangeThrowsException() {
-        Workbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) wb.createSheet();          
-        setCellData(sheet);
-        AreaReference source = new AreaReference("A1:B2");
-        XSSFPivotTable pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
-        int columnIndex = 5;
-        boolean isDataField = true;
-        
-        try {
-            pivotTable.addDataColumn(columnIndex, isDataField);
-        } catch(IndexOutOfBoundsException e) {
-            return;
-        }
-        fail();
-    }
-    
-    public static void setCellData(XSSFSheet sheet){
         Row row1 = sheet.createRow((short) 0);
         // Create a cell and put a value in it.
         Cell cell = row1.createCell((short) 0);
@@ -131,6 +60,67 @@ public class TestXSSFPivotTable extends TestCase {
         cell6.setCellValue(9);
         Cell cell9 = row3.createCell((short) 2);
         cell9.setCellValue("Bepa");  
+        
+        AreaReference source = new AreaReference("A1:B2");
+        pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
     }
     
+    /*
+     * Verify that when creating a row label it's  created on the correct row
+     * and the count is increased by one.
+     */
+    @Test
+    public void testAddRowLabelToPivotTable() {
+        int columnIndex = 0;
+        
+        pivotTable.addRowLabel(columnIndex);
+        CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
+        
+        assertEquals(defintion.getRowFields().getFieldArray(0).getX(), columnIndex);
+        assertEquals(defintion.getRowFields().getCount(), 1);
+    }
+    /**
+     * Verify that it's not possible to create a row label outside of the referenced area.
+     */
+    @Test
+    public void testAddRowOutOfRangeThrowsException() {
+        int columnIndex = 5;
+                
+        try {
+            pivotTable.addRowLabel(columnIndex);    
+        } catch(IndexOutOfBoundsException e) {
+            return;
+        }
+        fail();
+    }
+    
+     /**
+     * Verify when creating a data column set to a data field, the data field with the corresponding
+     * column index will be set to true.
+     */
+    @Test
+    public void testAddDataColumn() {
+        int columnIndex = 0;
+        boolean isDataField = true;
+        
+        pivotTable.addDataColumn(columnIndex, isDataField);
+        CTPivotFields pivotFields = pivotTable.getCTPivotTableDefinition().getPivotFields();
+        assertEquals(pivotFields.getPivotFieldArray(columnIndex).getDataField(), isDataField);
+    }
+    
+    /**
+     * Verify that it's not possible to create a data column outside of the referenced area.
+     */
+    @Test
+    public void testAddDataColumnOutOfRangeThrowsException() {         
+        int columnIndex = 5;
+        boolean isDataField = true;
+        
+        try {
+            pivotTable.addDataColumn(columnIndex, isDataField);
+        } catch(IndexOutOfBoundsException e) {
+            return;
+        }
+        fail(); 
+    }
 }
