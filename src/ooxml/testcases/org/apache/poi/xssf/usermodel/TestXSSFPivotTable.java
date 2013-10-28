@@ -22,7 +22,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 
 public class TestXSSFPivotTable extends TestCase {
     
@@ -35,11 +35,12 @@ public class TestXSSFPivotTable extends TestCase {
         int columnIndex = 0;
         
         pivotTable.addRowLabel(columnIndex);
-        CTPivotFields fields = pivotTable.getCTPivotTableDefinition().getPivotFields();
-        assertNotNull(fields);    
+        CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
         
-        assertEquals(fields.getPivotFieldArray(columnIndex).getItems().getCount(), 
+        assertEquals(defintion.getPivotFields().getPivotFieldArray(columnIndex).getItems().getCount(), 
                 source.getLastCell().getRow());
+        
+        assertEquals(defintion.getRowFields().getFieldArray(0).getX(), columnIndex);
     }
     
         public static void setCellData(XSSFSheet sheet){
