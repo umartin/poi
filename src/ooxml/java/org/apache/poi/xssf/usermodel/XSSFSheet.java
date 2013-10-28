@@ -39,12 +39,13 @@ import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.format.CellFormat;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
@@ -57,7 +58,6 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
-import org.apache.tools.ant.taskdefs.Pack;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
@@ -3376,7 +3376,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * including: pivotCacheDefinition, pivotCacheRecords
      * @return returns a pivotTable
      */
-    public XSSFPivotTable createPivotTable() {
+    private XSSFPivotTable createPivotTable() {
         if(pivotTables == null) {
             pivotTables = new ArrayList<>();
         }
@@ -3413,6 +3413,22 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         //Set relationships id for pivotCacheDefinition to pivotCacheRecords
         pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition().setId(pivotCacheDefinition.getRelationId(pivotCacheRecords));
  
+        return pivotTable;
+    }
+    
+    public XSSFPivotTable createPivotTable(AreaReference source, CellReference position){
+        XSSFPivotTable pivotTable = createPivotTable();
+        
+        //get cell next to cr, add it and cr to AreaReference and give AreaReference to pivotTable.
+        pivotTable.setLocation("F5:G6", 1, 1, 1);
+        //Cache definition
+        CTPivotCacheDefinition cacheDef = pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition();
+        CTCacheSource cacheSource = cacheDef.addNewCacheSource();
+        cacheSource.setType(STSourceType.WORKSHEET);
+        CTWorksheetSource worksheetSource = cacheSource.addNewWorksheetSource();
+        worksheetSource.setSheet(this.getSheetName());
+        worksheetSource.setRef(source.formatAsString());
+        
         return pivotTable;
     }
 }
