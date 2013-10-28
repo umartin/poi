@@ -215,10 +215,14 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * @param columnIndex, the index of the column to be used as row label.
      */
     public void addRowLabel(int columnIndex) {
-        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();            
-
         AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
         int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
+        int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
+        
+        if(columnIndex > lastColIndex) {
+            throw new IndexOutOfBoundsException();
+        }
+        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();            
     
         List<CTPivotField> pivotFieldList = pivotTableDefinition.getPivotFields().getPivotFieldList();
         CTPivotField pivotField = CTPivotField.Factory.newInstance();
@@ -252,6 +256,13 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
      */
     public void addColumnLabel(STDataConsolidateFunction.Enum function, int columnIndex) {
+        AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
+        int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
+        
+        if(columnIndex > lastColIndex && columnIndex < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        
         addDataColumn(columnIndex, true);       
         addDataField(function, columnIndex);
         if (pivotTableDefinition.getDataFields().getCount() > 1) {
@@ -273,7 +284,13 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * The following functions exists:
      * Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
      */
-    private void addDataField(STDataConsolidateFunction.Enum function, int index) {
+    private void addDataField(STDataConsolidateFunction.Enum function, int columnIndex) {
+        AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
+        int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
+        
+        if(columnIndex > lastColIndex && columnIndex < 0) {
+            throw new IndexOutOfBoundsException();
+        }
         CTDataFields dataFields;
         if(pivotTableDefinition.getDataFields() != null) {
             dataFields = pivotTableDefinition.getDataFields();
@@ -282,7 +299,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }
         CTDataField dataField = dataFields.addNewDataField();
         dataField.setSubtotal(function);
-        dataField.setFld(index);          
+        dataField.setFld(columnIndex);          
         dataFields.setCount(dataFields.getDataFieldList().size());
     }
     
@@ -296,6 +313,11 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * @param isDataField, true if the data should be displayed in the pivot table.
      */
     public void addDataColumn(int columnIndex, boolean isDataField) {
+        AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
+        int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
+        if(columnIndex > lastColIndex && columnIndex < 0) {
+            throw new IndexOutOfBoundsException();
+        }
         CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();            
         List<CTPivotField> pivotFieldList = pivotFields.getPivotFieldList();
         CTPivotField pivotField = CTPivotField.Factory.newInstance();
@@ -309,10 +331,14 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * Add filter for the column with the corresponding index 
      * @param index, of the column to filter on
      */
-    public void addReportFilter(int index) {
-        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
+    public void addReportFilter(int columnIndex) {
         AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
+        int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
         int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
+        if(columnIndex > lastColIndex && columnIndex < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
     
         List<CTPivotField> pivotFieldList = pivotTableDefinition.getPivotFields().getPivotFieldList();
         CTPivotField pivotField = CTPivotField.Factory.newInstance();
@@ -323,7 +349,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
             items.addNewItem().setT(STItemType.DEFAULT);
         }
         items.setCount(items.getItemList().size());
-        pivotFieldList.set(index, pivotField);
+        pivotFieldList.set(columnIndex, pivotField);
         
         CTPageFields pageFields;
         if (pivotTableDefinition.getPageFields()!= null) {
@@ -336,7 +362,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         
         CTPageField pageField = pageFields.addNewPageField();
         pageField.setHier(-1);
-        pageField.setFld(index);
+        pageField.setFld(columnIndex);
     }
     
     /**
@@ -387,4 +413,5 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }
         pivotFields.setCount(pivotFields.getPivotFieldList().size());
     }
+    
 }
