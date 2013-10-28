@@ -3402,9 +3402,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         //Create pivotCache and sets up it's relationship with the workbook
         pivotTable.setCache(workbook.addPivotCache(rId));
         
-        //Creates default settings for the pivot table
-        pivotTable.setDefaultPivotTableDefinition();
-        
         //Create relationship between pivotcacherecord and pivotcachedefinition
         XSSFPivotCacheRecords pivotCacheRecords = (XSSFPivotCacheRecords) pivotCacheDefinition.
                 createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, XSSFFactory.getInstance(), tableId);
@@ -3426,6 +3423,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public XSSFPivotTable createPivotTable(AreaReference source, CellReference position, XSSFSheet sourceSheet){
         XSSFPivotTable pivotTable = createPivotTable();
 
+        //Creates default settings for the pivot table
+        pivotTable.setDefaultPivotTableDefinition();
+        
         //Set sources and references
         pivotTable.createSourceReferences(source, position, sourceSheet);
         
