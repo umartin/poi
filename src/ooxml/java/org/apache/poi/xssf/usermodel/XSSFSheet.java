@@ -3425,8 +3425,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     public XSSFPivotTable createPivotTable(AreaReference source, CellReference position, XSSFSheet sourceSheet){
         XSSFPivotTable pivotTable = createPivotTable();
+
         //Set sources and references
         pivotTable.createSourceReferences(source, position, sourceSheet);
+        
+        //Create cache records
+        pivotTable.createCacheRecords();               
+        //Create cachefield/s and empty SharedItems
+        pivotTable.getPivotCacheDefinition().createCacheFields(this);
+        pivotTable.createDefaultDataColumns();
         
         return pivotTable;
     }

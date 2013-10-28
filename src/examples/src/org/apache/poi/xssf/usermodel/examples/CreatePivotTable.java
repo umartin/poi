@@ -27,7 +27,6 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
 
 /**
@@ -46,14 +45,6 @@ public class CreatePivotTable {
 
         setCellData(sheet);
         XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:C3"), new CellReference("H5"));
-       
-        pivotTable.createCacheRecords();
-   
-        CTPivotCacheDefinition cacheDef = pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition();
-        cacheDef.setRecordCount(pivotTable.getPivotCacheRecords().getCtPivotCacheRecords().getCount());
-        
-        //Create cachefield/s and empty SharedItems
-        pivotTable.getPivotCacheDefinition().createCacheFields(sheet);
                        
         pivotTable.addRowLabel(0);
         //pivotTable.addColumnLabel(STDataConsolidateFunction.AVERAGE,1);
@@ -90,11 +81,6 @@ public class CreatePivotTable {
         cell6.setCellValue(3);
         Cell cell9 = row3.createCell((short) 2);
         cell9.setCellValue(82);
-        
-        //Under pivottable
-        Row row6 = sheet.createRow((short) 5);
-        Cell cell10 = row6.createCell((short) 5);
-        cell10.setCellValue("Hej");
         
     }
 }

@@ -65,7 +65,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     private XSSFPivotCacheDefinition pivotCacheDefinition;
     private XSSFPivotCacheRecords pivotCacheRecords;
     private XSSFSheet parentSheet;
-    private AreaReference sourceArea;
 
     public XSSFPivotTable() {
         super();
@@ -113,14 +112,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     public void setPivotCacheRecords(XSSFPivotCacheRecords pivotCacheRecords) {
         this.pivotCacheRecords = pivotCacheRecords;
-    }
-    
-    public void setSourceArea(AreaReference area) {
-        this.sourceArea = area;
-    }
-    
-    public AreaReference getSourceArea() {
-        return sourceArea;
     }
     
     @Override
@@ -201,6 +192,10 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      */
     public void createCacheRecords() {
         CTPivotCacheRecords records =  pivotCacheRecords.getCtPivotCacheRecords();
+        String source = pivotCacheDefinition.getCTPivotCacheDefinition().
+                getCacheSource().getWorksheetSource().getRef();
+        AreaReference sourceArea = new AreaReference(source);
+        
         records.setCount(sourceArea.getLastCell().getRow()-sourceArea.getFirstCell().getRow());
         CTRecord record;
         Cell cell;
@@ -243,12 +238,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * @param columnIndex, the index of the column to be used as row label.
      */
     public void addRowLabel(int columnIndex) {
-        CTPivotFields pivotFields;
-        if (pivotTableDefinition.getPivotFields() != null) {
-            pivotFields = pivotTableDefinition.getPivotFields();            
-        } else {
-            pivotFields = pivotTableDefinition.addNewPivotFields();
-        }
+        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();            
+
         AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
         int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
     
@@ -329,17 +320,12 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * @param isDataField, true if the data should be displayed in the pivot table.
      */
     public void addDataColumn(int columnIndex, boolean isDataField) {
-        CTPivotFields pivotFields;
-        if (pivotTableDefinition.getPivotFields() != null) {
-            pivotFields = pivotTableDefinition.getPivotFields();            
-        } else {
-            pivotFields = pivotTableDefinition.addNewPivotFields();
-        }
+        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();            
         List<CTPivotField> pivotFieldList = pivotFields.getPivotFieldList();
         CTPivotField pivotField = CTPivotField.Factory.newInstance();
         
         pivotField.setDataField(isDataField);         
-        pivotFieldList.add(columnIndex, pivotField);
+        pivotFieldList.set(columnIndex, pivotField);
         pivotFields.setCount(pivotFieldList.size());
         pivotFields.setPivotFieldArray(pivotFieldList.toArray(new CTPivotField[pivotFieldList.size()]));
     }
@@ -349,12 +335,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * @param index, of the column to filter on
      */
     public void addReportFilter(int index) {
-        CTPivotFields pivotFields;
-        if (pivotTableDefinition.getPivotFields() != null) {
-            pivotFields = pivotTableDefinition.getPivotFields();            
-        } else {
-            pivotFields = pivotTableDefinition.addNewPivotFields();
-        }
+        CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
         AreaReference pivotArea = new AreaReference(pivotTableDefinition.getLocation().getRef());
         int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
     
@@ -367,7 +348,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
             items.addNewItem().setT(STItemType.DEFAULT);
         }
         items.setCount(items.getItemList().size());
-        pivotFieldList.add(index, pivotField);
+        pivotFieldList.set(index, pivotField);
         
         CTPageFields pageFields;
         if (pivotTableDefinition.getPageFields()!= null) {
@@ -392,16 +373,31 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     protected void createSourceReferences(AreaReference source, CellReference position, XSSFSheet sourceSheet){
         //Get cell one to the right and one down from position, add both to AreaReference and set pivot table location.
         AreaReference destination = new AreaReference(position, new CellReference(position.getRow()+1, position.getCol()+1));
-        this.setLocation(destination.formatAsString(), 1, 1, 1);
+        setLocation(destination.formatAsString(), 1, 1, 1);
 
-        //Set source reference
-        this.setSourceArea(source);
         //Set source for the pivot table
-        CTPivotCacheDefinition cacheDef = this.getPivotCacheDefinition().getCTPivotCacheDefinition();
+        CTPivotCacheDefinition cacheDef = getPivotCacheDefinition().getCTPivotCacheDefinition();
         CTCacheSource cacheSource = cacheDef.addNewCacheSource();
         cacheSource.setType(STSourceType.WORKSHEET);
         CTWorksheetSource worksheetSource = cacheSource.addNewWorksheetSource();
         worksheetSource.setSheet(sourceSheet.getSheetName());
         worksheetSource.setRef(source.formatAsString());
+    }
+    
+    protected void createDefaultDataColumns() {
+        CTPivotFields pivotFields;
+        if (pivotTableDefinition.getPivotFields() != null) {
+            pivotFields = pivotTableDefinition.getPivotFields();            
+        } else {
+            pivotFields = pivotTableDefinition.addNewPivotFields();
+        }
+        String source = pivotCacheDefinition.getCTPivotCacheDefinition().
+                getCacheSource().getWorksheetSource().getRef();
+        AreaReference sourceArea = new AreaReference(source);
+        int firstColumn = sourceArea.getFirstCell().getCol();
+        int lastColumn = sourceArea.getLastCell().getCol();
+        for(int i = 0; i<lastColumn-firstColumn; i++) {
+            pivotFields.addNewPivotField().setDataField(false);
+        }
     }
 }
