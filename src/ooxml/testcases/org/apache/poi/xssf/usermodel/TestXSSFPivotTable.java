@@ -122,6 +122,23 @@ public class TestXSSFPivotTable {
         assertEquals(defintion.getColFields().getFieldArray(0).getX(), -2);
     }
     
+     /*
+     * Verify that a data field is created when creating a data column
+     */
+    @Test
+    public void testColumnLabelCreatesDataField() {
+        int columnIndex = 0;
+        STDataConsolidateFunction.Enum sum = STDataConsolidateFunction.SUM;
+        
+        pivotTable.addColumnLabel(sum, columnIndex);
+        
+        CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
+        
+        assertEquals(defintion.getDataFields().getDataFieldArray(0).getFld(), columnIndex);
+        assertEquals(defintion.getDataFields().getDataFieldArray(0).getSubtotal(), sum);
+
+    }
+    
     /**
      * Verify that it's not possible to create a column label outside of the referenced area.
      */
@@ -135,7 +152,7 @@ public class TestXSSFPivotTable {
             return;
         }
         fail();
-    }
+    }   
     
      /**
      * Verify when creating a data column set to a data field, the data field with the corresponding
