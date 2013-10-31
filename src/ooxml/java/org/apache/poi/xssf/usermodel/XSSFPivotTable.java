@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.NoSuchElementException;
 import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
 import static org.apache.poi.POIXMLDocumentPart.DEFAULT_XML_OPTIONS;
@@ -304,8 +305,39 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }
         CTDataField dataField = dataFields.addNewDataField();
         dataField.setSubtotal(function);
-        dataField.setFld(columnIndex);          
+        Cell cell = parentSheet.getRow(pivotArea.getFirstCell().getRow()).getCell(columnIndex);
+        cell.setCellType(Cell.CELL_TYPE_STRING);
+        dataField.setName(getNameOfFunction(function) + " of " + cell.getStringCellValue());
+        dataField.setFld(columnIndex);
         dataFields.setCount(dataFields.getDataFieldList().size());
+    }
+    
+    public String getNameOfFunction(STDataConsolidateFunction.Enum function) {
+        switch(function.intValue()) {
+            case STDataConsolidateFunction.INT_AVERAGE:
+                return "Average";
+            case STDataConsolidateFunction.INT_COUNT:
+                return "Count";                
+            case STDataConsolidateFunction.INT_COUNT_NUMS:
+                return "Count";
+            case STDataConsolidateFunction.INT_MAX:
+                return "Max";
+            case STDataConsolidateFunction.INT_MIN:
+                return "Min";    
+            case STDataConsolidateFunction.INT_PRODUCT:
+                return "Product";    
+            case STDataConsolidateFunction.INT_STD_DEV:
+                return "StdDev";                    
+            case STDataConsolidateFunction.INT_STD_DEVP:
+                return "StdDevp";                     
+            case STDataConsolidateFunction.INT_SUM:
+                return "Sum"; 
+            case STDataConsolidateFunction.INT_VAR:
+                return "Var";                    
+            case STDataConsolidateFunction.INT_VARP:
+                return "Varp"; 
+        }
+        throw new NoSuchElementException();
     }
     
     /**
