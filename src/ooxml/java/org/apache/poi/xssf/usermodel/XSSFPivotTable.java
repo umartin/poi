@@ -230,7 +230,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         CTItems items = pivotField.addNewItems();
 
         pivotField.setAxis(STAxis.AXIS_ROW);
-        for(int i = 0; i < lastRowIndex; i++) {
+        for(int i = 0; i <= lastRowIndex; i++) {
             items.addNewItem().setT(STItemType.DEFAULT);
         }
         items.setCount(items.getItemList().size());
@@ -332,15 +332,15 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     
     /**
      * Add filter for the column with the corresponding index and cell value
-     * @param cellRef, the cell containing the value to filter on
+     * @param columnIndex, index of column to filter on
      */
-    public void addReportFilter(CellReference cellRef) {        
+    public void addReportFilter(int columnIndex) {        
         AreaReference pivotArea = new AreaReference(getPivotCacheDefinition().
                 getCTPivotCacheDefinition().getCacheSource().getWorksheetSource().getRef());
         int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
         int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
         
-        if(cellRef.getCol() > lastColIndex && cellRef.getCol() < 0) {
+        if(columnIndex > lastColIndex && columnIndex < 0) {
             throw new IndexOutOfBoundsException();
         }
         CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
@@ -354,7 +354,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
             items.addNewItem().setT(STItemType.DEFAULT);
         }
         items.setCount(items.getItemList().size());
-        pivotFieldList.set(cellRef.getCol(), pivotField);
+        pivotFieldList.set(columnIndex, pivotField);
         
         CTPageFields pageFields;
         if (pivotTableDefinition.getPageFields()!= null) {
@@ -366,8 +366,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }
         CTPageField pageField = pageFields.addNewPageField();
         pageField.setHier(-1);
-        pageField.setFld(cellRef.getCol());
-        pageField.setItem(cellRef.getRow()-1);
+        pageField.setFld(columnIndex);
         
         pageFields.setCount(pageFields.getPageFieldList().size());
         pivotTableDefinition.getLocation().setColPageCount(pageFields.getCount());
