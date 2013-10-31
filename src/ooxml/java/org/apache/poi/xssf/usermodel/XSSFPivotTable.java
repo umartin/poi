@@ -312,6 +312,11 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         dataFields.setCount(dataFields.getDataFieldList().size());
     }
     
+    /**
+     * Gets the name to use for the corresponding function
+     * @param function, the function which name is requested
+     * @return the name
+     */
     public String getNameOfFunction(STDataConsolidateFunction.Enum function) {
         switch(function.intValue()) {
             case STDataConsolidateFunction.INT_AVERAGE:
