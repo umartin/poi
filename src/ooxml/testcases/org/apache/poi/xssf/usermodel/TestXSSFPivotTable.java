@@ -83,7 +83,7 @@ public class TestXSSFPivotTable {
      * Verify that it's not possible to create a row label outside of the referenced area.
      */
     @Test
-    public void testAddRowOutOfRangeThrowsException() {
+    public void testAddRowLabelOutOfRangeThrowsException() {
         int columnIndex = 5;
                 
         try {
