@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.util.List;
+import static junit.framework.TestCase.assertNotNull;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.PasswordRecord;
@@ -25,9 +26,12 @@ import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -1210,5 +1214,42 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(ROW_COUNT-1, sh.getLastRowNum());
     }
     
+    public void testCreatePivotTable(){
+        //set up workbook
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        
+        Row row1 = sheet.createRow((short) 0);
+        Cell cell = row1.createCell((short) 0);
+        cell.setCellValue("Names");
+        Cell cell2 = row1.createCell((short) 1);
+        cell2.setCellValue("#");
+
+        Row row2 = sheet.createRow((short) 1);
+        Cell cell3 = row2.createCell((short) 0);
+        cell3.setCellValue("Jane");
+        Cell cell4 = row2.createCell((short) 1);
+        cell4.setCellValue(3);
+        
+        Row row3 = sheet.createRow((short) 2);
+        Cell cell5 = row3.createCell((short) 0);
+        cell5.setCellValue("John");
+        Cell cell6 = row3.createCell((short) 1);
+        cell6.setCellValue(3);
+        testCreatePivotTable(wb, sheet);
+        
+    }
+    private void testCreatePivotTable(XSSFWorkbook wb, XSSFSheet sheet){
+        assertNotNull(sheet);
+        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:B2"), new CellReference("H5"));
+        assertNotNull(pivotTable);
+        assertTrue(sheet.getPivotTables().size() > 0);
+        assertNotNull(wb);
+        XSSFSheet sheet2 = wb.createSheet();
+        XSSFPivotTable pivotTable2 = sheet2.createPivotTable(new AreaReference("A1:B2"), new CellReference("H5"), sheet);
+        assertNotNull(pivotTable2);
+        assertTrue(sheet2.getPivotTables().size() > 1);
+        
+    }
     
 }

@@ -92,7 +92,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private List<CellRangeAddress> arrayFormulas;
     private XSSFDataValidationHelper dataValidationHelper; 
     
-    private List<XSSFPivotTable> pivotTables;
+    private static List<XSSFPivotTable> pivotTables;
 
     /**
      * Creates new XSSFSheet   - called by XSSFWorkbook to create a sheet from scratch.
@@ -3371,6 +3371,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
       }
       return null;
     }
+    
+    public List<XSSFPivotTable> getPivotTables() {
+        return pivotTables;
+    }
+    
     /**
      * Creates an empty XSSFPivotTable and sets up all its relationships
      * including: pivotCacheDefinition, pivotCacheRecords
@@ -3432,7 +3437,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         //Create cache records
         pivotTable.createCacheRecords(sourceSheet);               
         //Create cachefield/s and empty SharedItems
-        pivotTable.getPivotCacheDefinition().createCacheFields(this);
+        pivotTable.getPivotCacheDefinition().createCacheFields(sourceSheet);
         pivotTable.createDefaultDataColumns();
         
         return pivotTable;
