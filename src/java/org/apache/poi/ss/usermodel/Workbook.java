@@ -582,7 +582,4 @@ public interface Workbook {
      */
     boolean getForceFormulaRecalculation();
 
-    public CTPivotCache addPivotCache(String rId);
-    
-
 }
