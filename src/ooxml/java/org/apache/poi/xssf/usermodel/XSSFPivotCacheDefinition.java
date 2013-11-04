@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
 import static org.apache.poi.POIXMLDocumentPart.DEFAULT_XML_OPTIONS;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
@@ -41,7 +42,16 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
         ctPivotCacheDefinition = CTPivotCacheDefinition.Factory.newInstance();
         createDefaultValues();
     }
-    
+     /**
+     * Creates an XSSFPivotCacheDefintion representing the given package part and relationship.
+     *
+     * @param part - The package part that holds xml data representing this pivot cache definition.
+     * @param rel - the relationship of the given package part in the underlying OPC package
+     */
+    protected XSSFPivotCacheDefinition(PackagePart part, PackageRelationship rel) {
+        super(part, rel);
+        ctPivotCacheDefinition = CTPivotCacheDefinition.Factory.newInstance();
+    }
     public CTPivotCacheDefinition getCTPivotCacheDefinition(){
         return ctPivotCacheDefinition;
     }
@@ -95,7 +105,7 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
             cf.setNumFmtId(0);
             Cell cell = row.getCell(i);
             cell.setCellType(Cell.CELL_TYPE_STRING);
-            cf.setName(cell.getStringCellValue());
+            cf.setName(row.getCell(i).getStringCellValue());
             cf.addNewSharedItems();
         }
     }

@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
 import static org.apache.poi.POIXMLDocumentPart.DEFAULT_XML_OPTIONS;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
@@ -67,7 +68,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     private XSSFPivotCacheRecords pivotCacheRecords;
     private XSSFSheet parentSheet;
 
-    public XSSFPivotTable() {
+    protected XSSFPivotTable() {
         super();
         pivotTableDefinition = CTPivotTableDefinition.Factory.newInstance();
         pivotCache = CTPivotCache.Factory.newInstance();
@@ -75,6 +76,19 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotCacheRecords = new XSSFPivotCacheRecords();
     }
 
+     /**
+     * Creates an XSSFPivotTable representing the given package part and relationship.
+     *
+     * @param part - The package part that holds xml data representing this pivot table.
+     * @param rel - the relationship of the given package part in the underlying OPC package
+     */
+    protected XSSFPivotTable(PackagePart part, PackageRelationship rel) {
+        super(part, rel);
+        pivotTableDefinition = CTPivotTableDefinition.Factory.newInstance();
+        pivotCache = CTPivotCache.Factory.newInstance();
+        pivotCacheDefinition = new XSSFPivotCacheDefinition();
+        pivotCacheRecords = new XSSFPivotCacheRecords();
+    }
     public void setCache(CTPivotCache pivotCache) {
         this.pivotCache = pivotCache;
     }
