@@ -24,6 +24,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.junit.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageField;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
@@ -182,5 +184,36 @@ public class TestXSSFPivotTable {
             return;
         }
         fail(); 
+    }
+    
+     /**
+     * Verify that it's possible to create a new filter
+     */
+    @Test
+    public void testAddReportFilter() {         
+        int columnIndex = 0;
+
+        pivotTable.addReportFilter(columnIndex);
+        CTPageFields fields = pivotTable.getCTPivotTableDefinition().getPageFields();
+        CTPageField field = fields.getPageFieldArray(0);
+        assertEquals(field.getFld(), columnIndex);
+        assertEquals(field.getHier(), -1);
+        assertEquals(fields.getCount(), 1);
+        
+    }
+    
+     /**
+     * Verify that it's not possible to create a new filter outside of the referenced area.
+     */
+    @Test
+    public void testAddReportFilterOutOfRangeThrowsException() {         
+        int columnIndex = 5;    
+        try {
+            pivotTable.addReportFilter(columnIndex);
+        } catch(IndexOutOfBoundsException e) {
+            return;
+        }
+        fail(); 
+        
     }
 }

@@ -167,8 +167,9 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     
     /**
      * Creates all pivotCacheRecords in the referenced area.
+     * @param sourceSheet the sheet where the data comes from
      */
-    protected void createCacheRecords() {
+    protected void createCacheRecords(XSSFSheet sourceSheet) {
         CTPivotCacheRecords records =  pivotCacheRecords.getCtPivotCacheRecords();
         String source = pivotCacheDefinition.getCTPivotCacheDefinition().
                 getCacheSource().getWorksheetSource().getRef();
@@ -179,7 +180,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         Row row;
         //Goes through all cells, except the header, in the referenced area.
         for(int i = sourceArea.getFirstCell().getRow()+1; i <= sourceArea.getLastCell().getRow(); i++) {
-            row = parentSheet.getRow(i);
+            row = sourceSheet.getRow(i);
             record = records.addNewR();
             for(int j = sourceArea.getFirstCell().getCol(); j <= sourceArea.getLastCell().getCol(); j++) {
                 cell = row.getCell(j);
@@ -317,7 +318,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * @param function, the function which name is requested
      * @return the name
      */
-    public String getNameOfFunction(STDataConsolidateFunction.Enum function) {
+    private String getNameOfFunction(STDataConsolidateFunction.Enum function) {
         switch(function.intValue()) {
             case STDataConsolidateFunction.INT_AVERAGE:
                 return "Average";
@@ -346,7 +347,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     }
     
     /**
-     * 
      * Add column containing data from the referenced area.
      * @param columnIndex, the index of the column containing the data
      * @param isDataField, true if the data should be displayed in the pivot table.
@@ -404,6 +404,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         CTPageField pageField = pageFields.addNewPageField();
         pageField.setHier(-1);
         pageField.setFld(columnIndex);
+        //pageField.setItem(columnIndex);
         
         pageFields.setCount(pageFields.getPageFieldList().size());
         pivotTableDefinition.getLocation().setColPageCount(pageFields.getCount());

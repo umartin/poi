@@ -3435,7 +3435,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         pivotTable.createSourceReferences(source, position, sourceSheet);
         
         //Create cache records
-        pivotTable.createCacheRecords();               
+        pivotTable.createCacheRecords(sourceSheet);               
         //Create cachefield/s and empty SharedItems
         pivotTable.getPivotCacheDefinition().createCacheFields(this);
         pivotTable.createDefaultDataColumns();
