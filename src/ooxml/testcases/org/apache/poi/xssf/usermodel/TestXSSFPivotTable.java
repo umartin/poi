@@ -201,4 +201,19 @@ public class TestXSSFPivotTable {
         assertEquals(fields.getCount(), 1);
         
     }
+    
+     /**
+     * Verify that it's not possible to create a new filter outside of the referenced area.
+     */
+    @Test
+    public void testAddReportFilterOutOfRangeThrowsException() {         
+        int columnIndex = 5;    
+        try {
+            pivotTable.addReportFilter(columnIndex);
+        } catch(IndexOutOfBoundsException e) {
+            return;
+        }
+        fail(); 
+        
+    }
 }
