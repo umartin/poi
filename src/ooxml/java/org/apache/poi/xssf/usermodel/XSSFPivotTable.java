@@ -167,8 +167,9 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     
     /**
      * Creates all pivotCacheRecords in the referenced area.
+     * @param sourceSheet the sheet where the data comes from
      */
-    protected void createCacheRecords() {
+    protected void createCacheRecords(XSSFSheet sourceSheet) {
         CTPivotCacheRecords records =  pivotCacheRecords.getCtPivotCacheRecords();
         String source = pivotCacheDefinition.getCTPivotCacheDefinition().
                 getCacheSource().getWorksheetSource().getRef();
@@ -179,7 +180,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         Row row;
         //Goes through all cells, except the header, in the referenced area.
         for(int i = sourceArea.getFirstCell().getRow()+1; i <= sourceArea.getLastCell().getRow(); i++) {
-            row = parentSheet.getRow(i);
+            row = sourceSheet.getRow(i);
             record = records.addNewR();
             for(int j = sourceArea.getFirstCell().getCol(); j <= sourceArea.getLastCell().getCol(); j++) {
                 cell = row.getCell(j);
