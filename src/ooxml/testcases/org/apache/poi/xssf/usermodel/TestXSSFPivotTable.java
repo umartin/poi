@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import junit.framework.TestCase;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.fail;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,18 +24,17 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
-import org.junit.*;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageField;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
 
-public class TestXSSFPivotTable {
+public class TestXSSFPivotTable extends TestCase {
     
     XSSFPivotTable pivotTable;
-    @Before
-    public void setup(){
+    @Override
+    public void setUp(){
         Workbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) wb.createSheet(); 
         
@@ -71,7 +71,6 @@ public class TestXSSFPivotTable {
      * Verify that when creating a row label it's  created on the correct row
      * and the count is increased by one.
      */
-    @Test
     public void testAddRowLabelToPivotTable() {
         int columnIndex = 0;
         
@@ -84,7 +83,6 @@ public class TestXSSFPivotTable {
     /**
      * Verify that it's not possible to create a row label outside of the referenced area.
      */
-    @Test
     public void testAddRowLabelOutOfRangeThrowsException() {
         int columnIndex = 5;
                 
@@ -99,7 +97,6 @@ public class TestXSSFPivotTable {
      /*
      * Verify that when creating one column label, no col fields are being created.
      */
-    @Test
     public void testAddOneColumnLabelToPivotTableDoesNotCreateColField() {
         int columnIndex = 0;
         
@@ -112,7 +109,6 @@ public class TestXSSFPivotTable {
      /*
      * Verify that when creating two column labels, a col field is being created and X is set to -2.
      */
-    @Test
     public void testAddTwoColumnLabelsToPivotTable() {
         int columnOne = 0;
         int columnTwo = 1;
@@ -127,7 +123,6 @@ public class TestXSSFPivotTable {
      /*
      * Verify that a data field is created when creating a data column
      */
-    @Test
     public void testColumnLabelCreatesDataField() {
         int columnIndex = 0;
         STDataConsolidateFunction.Enum sum = STDataConsolidateFunction.SUM;
@@ -144,7 +139,6 @@ public class TestXSSFPivotTable {
     /**
      * Verify that it's not possible to create a column label outside of the referenced area.
      */
-    @Test
     public void testAddColumnLabelOutOfRangeThrowsException() {
         int columnIndex = 5;
                 
@@ -160,7 +154,6 @@ public class TestXSSFPivotTable {
      * Verify when creating a data column set to a data field, the data field with the corresponding
      * column index will be set to true.
      */
-    @Test
     public void testAddDataColumn() {
         int columnIndex = 0;
         boolean isDataField = true;
@@ -173,7 +166,6 @@ public class TestXSSFPivotTable {
     /**
      * Verify that it's not possible to create a data column outside of the referenced area.
      */
-    @Test
     public void testAddDataColumnOutOfRangeThrowsException() {         
         int columnIndex = 5;
         boolean isDataField = true;
@@ -189,7 +181,6 @@ public class TestXSSFPivotTable {
      /**
      * Verify that it's possible to create a new filter
      */
-    @Test
     public void testAddReportFilter() {         
         int columnIndex = 0;
 
@@ -205,7 +196,6 @@ public class TestXSSFPivotTable {
      /**
      * Verify that it's not possible to create a new filter outside of the referenced area.
      */
-    @Test
     public void testAddReportFilterOutOfRangeThrowsException() {         
         int columnIndex = 5;    
         try {
