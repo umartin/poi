@@ -317,7 +317,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      * @param function, the function which name is requested
      * @return the name
      */
-    public String getNameOfFunction(STDataConsolidateFunction.Enum function) {
+    private String getNameOfFunction(STDataConsolidateFunction.Enum function) {
         switch(function.intValue()) {
             case STDataConsolidateFunction.INT_AVERAGE:
                 return "Average";
@@ -346,7 +346,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     }
     
     /**
-     * 
      * Add column containing data from the referenced area.
      * @param columnIndex, the index of the column containing the data
      * @param isDataField, true if the data should be displayed in the pivot table.
@@ -404,6 +403,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         CTPageField pageField = pageFields.addNewPageField();
         pageField.setHier(-1);
         pageField.setFld(columnIndex);
+        //pageField.setItem(columnIndex);
         
         pageFields.setCount(pageFields.getPageFieldList().size());
         pivotTableDefinition.getLocation().setColPageCount(pageFields.getCount());
